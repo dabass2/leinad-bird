@@ -30,10 +30,6 @@ COPY --from=builder /app/node_modules ./node_modules
 # Assuming the build output is in ./.output
 COPY --from=builder /app/.output ./.output
 
-COPY --from=builder /app/.output/public/assets/ ./.output/public/app/assets/
-
-RUN ls -la ./.output/public/app/assets
-
 # Expose the port your app runs on (default is often 3000)
 EXPOSE 3000
 
