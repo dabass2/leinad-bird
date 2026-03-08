@@ -55,6 +55,7 @@ const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 	console.log(`Generating word of the day for ${dateSeed}...`);
 	const word = generate({ minLength: 4, seed: dateSeed, exactly: 1 })[0];
 	console.log(word);
+	// TODO: Add in retry if word doesn't exist
 	const res = await fetch(
 		`https://freedictionaryapi.com/api/v1/entries/en/${word}`,
 	);
@@ -220,7 +221,7 @@ function Defy() {
 			<p className="col-span-12 text-center text-6xl mb-2">
 				defy - {formatUtcDate(new Date())}
 			</p>
-			<section className="col-span-6">
+			<section className="col-span-full md:col-span-6">
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
@@ -268,7 +269,7 @@ function Defy() {
 				<WordGuesses />
 			</section>
 
-			<section className="col-span-6">
+			<section className="col-span-full md:col-span-6">
 				<WordDef wordDef={wordDef} />
 			</section>
 		</main>
