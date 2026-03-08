@@ -3,21 +3,10 @@ export default function Footer() {
 
 	return (
 		<footer className="mt-20 border-t border-(--line) px-4 pb-14 pt-10 text-(--sea-ink-soft)">
-			<div className="page-wrap flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+			<div className="page-wrap flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left">
 				<p className="m-0 text-sm">
 					&copy; {year} Daniel Bass. All rights reserved.
 				</p>
-				{/* <p className="island-kicker m-0">
-					Powered by{" "}
-					<a
-						href="https://freedictionaryapi.com"
-						target="_blank"
-						rel="noreferrer"
-						className="text-(--sea-ink-soft) hover:text-(--sea-ink)"
-					>
-						FreeDictionaryAPI.com
-					</a>
-				</p> */}
 			</div>
 			<div className="mt-4 flex justify-center gap-4">
 				<a

@@ -81,35 +81,63 @@ const guessWord = createServerFn({
 	method: "POST",
 })
 	.inputValidator(
-		z.object({ guess: z.string().min(1), numGuesses: z.number().min(0) }),
+		z.object({
+			guess: z
+				.string()
+				.nonempty()
+				.regex(/^[a-zA-Z]+$/)
+				.refine((s) => !s.includes(" ")),
+			numGuesses: z.number().min(0),
+			hintsUsed: z.number().optional(),
+			isHint: z.boolean(),
+		}),
 	)
 	.handler(async ({ data }) => {
 		console.log(
-			`Received guess: ${data.guess} with ${data.numGuesses} previous guesses`,
+			`Received guess: ${data.guess} with ${data.numGuesses} previous guesses and hints ${data.hintsUsed}`,
 		);
+
 		const wordOfDay = await getWordOfDay();
 
-		// This shouldn't happen, but if it does, they've failed so just end game
-		if (data.numGuesses > 5) {
-			console.log(
-				`BUG DETECTED. Limit exceeded. The word was ${wordOfDay.word}`,
-			);
-			return { correct: false, wordDef: wordOfDay, failure: true };
-		}
+		// If the user requested a hint, skip the guess checking
+		if (!data.isHint) {
+			// This shouldn't happen, but if it does, they've failed so just end game
+			if (data.numGuesses > 5) {
+				console.log(
+					`BUG DETECTED. Limit exceeded. The word was ${wordOfDay.word}`,
+				);
+				return {
+					correct: false,
+					wordDef: wordOfDay,
+					failure: true,
+					wasHint: false,
+				};
+			}
 
-		const isCorrect =
-			data?.guess?.toLowerCase() === wordOfDay.word?.toLowerCase();
-		if (isCorrect) {
-			console.log(`Correct guess! The word was indeed ${wordOfDay.word}`);
-			return { correct: true, wordDef: wordOfDay, failure: false };
-		}
+			const isCorrect =
+				data?.guess?.toLowerCase() === wordOfDay.word?.toLowerCase();
+			if (isCorrect) {
+				console.log(`Correct guess! The word was indeed ${wordOfDay.word}`);
+				return {
+					correct: true,
+					wordDef: wordOfDay,
+					failure: false,
+					wasHint: false,
+				};
+			}
 
-		// If the guess is wrong and it's the 5th guess, reveal the word and definition
-		if (data.numGuesses > 4) {
-			console.log(
-				`Final guess was incorrect. The word was ${wordOfDay.word}. Game over.`,
-			);
-			return { correct: false, wordDef: wordOfDay, failure: true };
+			// If the guess is wrong and it's the 5th guess, reveal the word and definition
+			if (data.numGuesses > 4) {
+				console.log(
+					`Final guess was incorrect. The word was ${wordOfDay.word}. Game over.`,
+				);
+				return {
+					correct: false,
+					wordDef: wordOfDay,
+					failure: true,
+					wasHint: false,
+				};
+			}
 		}
 
 		// General rules for hints
@@ -122,12 +150,12 @@ const guessWord = createServerFn({
 		if (numGuesses === 0) {
 			// initial page load, show 1
 			numHintsToShow = 1;
-		} else if (numGuesses > 3) {
-			// one guess left, show them all
-			numHintsToShow = Infinity;
 		} else {
-			// otherwise, show # of guesses + 1
-			numHintsToShow = numGuesses + 1;
+			// otherwise, show # of guesses + 1 + any hints that have been used
+			// TODO: Look into this, if hintsUsed is 1 (first hint used) don't add any
+			// otherwise it shows 2 hints. After that just show hintsUsed per normal
+			numHintsToShow =
+				numGuesses + 1 + (data.hintsUsed === 1 ? 0 : data.hintsUsed || 0);
 		}
 		console.log(
 			`Number of guess ${numGuesses}. Showing number of hints ${numHintsToShow}`,
@@ -146,12 +174,19 @@ const guessWord = createServerFn({
 			})),
 		};
 
-		return { correct: false, wordDef: defOutlineWithHints, failure: false };
+		return {
+			correct: false,
+			wordDef: defOutlineWithHints,
+			failure: false,
+			wasHint: data.isHint,
+		};
 	});
 
 export const Route = createFileRoute("/defy/")({
 	loader: async () => {
-		return await guessWord({ data: { guess: " ", numGuesses: 0 } });
+		return await guessWord({
+			data: { guess: "INITIALGUESS", numGuesses: 0, isHint: false },
+		});
 	},
 	component: Defy,
 });
@@ -159,33 +194,47 @@ export const Route = createFileRoute("/defy/")({
 function Defy() {
 	const data = Route.useLoaderData();
 
-	const storedGuesses = useStore(guessStore, (state) => state.guesses);
+	const { guesses: storedGuesses, hintsUsed } = useStore(
+		guessStore,
+		(state) => state,
+	);
 
 	const guessWordMutation = useMutation({
-		mutationFn: async (values: { guess: string }) => {
+		mutationFn: async (values: { guess: string; isHint: boolean }) => {
 			const storedNumGuesses = storedGuesses.length;
 			return await guessWord({
 				data: {
 					guess: values.guess,
 					numGuesses: storedNumGuesses + 1,
+					hintsUsed: hintsUsed,
+					isHint: values.isHint,
 				},
 			});
 		},
 		onSuccess: (result) => {
-			addGuess({
-				word: form.getFieldValue("guess"),
-				status: result.correct ? "correct" : "wrong",
-			});
-			form.reset({ guess: "" });
+			if (!result.wasHint) {
+				addGuess({
+					word: form.getFieldValue("guess"),
+					status: result.correct ? "correct" : "wrong",
+				});
+				form.reset({ guess: "" });
+			}
 		},
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <idk why I would put the function inside the depend array>
+	useEffect(() => {
+		if (hintsUsed > 0) {
+			guessWordMutation.mutate({ guess: "HINTGUESS", isHint: true });
+		}
+	}, [hintsUsed]);
 
 	const form = useForm({
 		defaultValues: {
 			guess: "",
 		},
 		onSubmit: async (values) => {
-			guessWordMutation.mutate(values.value);
+			guessWordMutation.mutate({ ...values.value, isHint: false });
 		},
 		validators: {
 			onSubmit: z.object({
@@ -239,6 +288,7 @@ function Defy() {
 								<Field data-invalid={isInvalid} className="flex-1">
 									<span className="flex flex-row gap-2 items-center">
 										<Input
+											autoFocus
 											disabled={isGameOver || guessWordMutation.isPending}
 											id={field.name}
 											name={field.name}

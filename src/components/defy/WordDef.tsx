@@ -1,5 +1,7 @@
+import { guessStore, increaseHintsUsed } from "#/lib/guess-store";
 import type { TWordOfDay } from "#/types/defy";
-import { ExternalLink } from "lucide-react";
+import { useStore } from "@tanstack/react-store";
+import { ExternalLink, Lightbulb } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -9,6 +11,8 @@ export type WordDefProps = {
 };
 
 export function WordDef({ wordDef }: WordDefProps) {
+	const numberOfGuesses = useStore(guessStore, (state) => state.guesses.length);
+
 	return (
 		<div className="island-shell rounded-2xl p-4">
 			<span className="flex flex-row items-center justify-between">
@@ -36,20 +40,22 @@ export function WordDef({ wordDef }: WordDefProps) {
 						<ExternalLink />
 					</Button>
 				</div>
-				{/* <div className="flex flex-row items-center gap-2">
-					{wordDef.partsOfSpeech.map((part, index) => (
-						<Badge key={`part-of-speech-${part}-${index}`}>{part}</Badge>
-					))}
-				</div> */}
+
+				{numberOfGuesses >= 4 && (
+					<Button
+						variant={"ghost"}
+						className="flex-end"
+						onClick={increaseHintsUsed}
+					>
+						Next Hint <Lightbulb />
+					</Button>
+				)}
 			</span>
-			{/* <div className="flex flex-row items-center gap-2 flex-wrap pt-2">
-				{wordDef.pronunciations?.map((pronunciation) => (
-					<code key={`pronunciation-${pronunciation}`}>{pronunciation}</code>
-				))}
-			</div> */}
+
 			<Separator className="my-4" />
 
 			<p className="font-semibold pb-2">Parts of Speech</p>
+
 			{wordDef.senses.map((sense, index) => {
 				const defsLeftHidden = sense.definitions.filter((d) => !d).length;
 				const revealedDefs = sense.definitions.filter((d) => !!d);
@@ -102,14 +108,6 @@ export function WordDef({ wordDef }: WordDefProps) {
 
 			<Separator className="m-4" />
 
-			{/* <p>Synonyms</p>
-			<div className="flex flex-row gap-2 my-2 flex-wrap">
-				{wordDef.synonyms?.map((synonym, index) => (
-					<Badge key={`synonym-${synonym}-${index}`} variant="outline">
-						{synonym}
-					</Badge>
-				))}
-			</div> */}
 			<div className="flex w-full">
 				<p className="font-light text-muted-foreground text-sm self-end">
 					Powered by{" "}
