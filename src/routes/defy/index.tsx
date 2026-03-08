@@ -5,9 +5,9 @@ import { WordGuesses } from "#/components/defy/WordGuesses";
 import { Button } from "#/components/ui/button";
 import { Field, FieldDescription } from "#/components/ui/field";
 import { Input } from "#/components/ui/input";
-import { GuessStore } from "#/lib/guess-store";
+import { addGuess, guessStore } from "#/lib/guess-store";
 import type { DictionaryResponse, TWordOfDay } from "#/types/defy";
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
@@ -159,9 +159,11 @@ export const Route = createFileRoute("/defy/")({
 function Defy() {
 	const data = Route.useLoaderData();
 
+	const storedGuesses = useStore(guessStore, (state) => state.guesses);
+
 	const guessWordMutation = useMutation({
 		mutationFn: async (values: { guess: string }) => {
-			const storedNumGuesses = GuessStore.store.state.guesses.length;
+			const storedNumGuesses = storedGuesses.length;
 			return await guessWord({
 				data: {
 					guess: values.guess,
@@ -170,7 +172,7 @@ function Defy() {
 			});
 		},
 		onSuccess: (result) => {
-			GuessStore.addGuess({
+			addGuess({
 				word: form.getFieldValue("guess"),
 				status: result.correct ? "correct" : "wrong",
 			});
