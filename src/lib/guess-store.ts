@@ -1,13 +1,20 @@
 import { Store } from "@tanstack/store";
 
+export type TGuessStore = {
+	guesses: TGuess[];
+	hintsUsed: number;
+	gameOver: boolean;
+};
+
 export type TGuess = {
 	word: string;
 	status: "correct" | "close" | "wrong";
 };
 
-export const guessStore = new Store<{ guesses: TGuess[]; hintsUsed: number }>({
+export const guessStore = new Store<TGuessStore>({
 	guesses: [],
 	hintsUsed: 0,
+	gameOver: false,
 });
 
 export const addGuess = (guess: TGuess) => {
@@ -21,6 +28,13 @@ export const increaseHintsUsed = () => {
 	guessStore.setState((prev) => ({
 		...prev,
 		hintsUsed: prev.hintsUsed + 1,
+	}));
+};
+
+export const setGameOver = () => {
+	guessStore.setState((prev) => ({
+		...prev,
+		gameOver: true,
 	}));
 };
 

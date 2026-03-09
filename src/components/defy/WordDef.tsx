@@ -1,5 +1,6 @@
 import { guessStore, increaseHintsUsed } from "#/lib/guess-store";
 import type { TWordOfDay } from "#/types/defy";
+import { useQuery } from "@tanstack/react-query";
 import { useStore } from "@tanstack/react-store";
 import { ExternalLink, Lightbulb } from "lucide-react";
 import { Badge } from "../ui/badge";
@@ -12,6 +13,16 @@ export type WordDefProps = {
 
 export function WordDef({ wordDef }: WordDefProps) {
 	const numberOfGuesses = useStore(guessStore, (state) => state.guesses.length);
+
+	// TODO: Look into it, looks like queryFn is required to be provided
+	const { refetch } = useQuery({
+		queryKey: ["wordDef"],
+	});
+
+	const useHint = async () => {
+		increaseHintsUsed();
+		await refetch();
+	};
 
 	return (
 		<div className="island-shell rounded-2xl p-4">
@@ -42,11 +53,7 @@ export function WordDef({ wordDef }: WordDefProps) {
 				</div>
 
 				{numberOfGuesses >= 4 && (
-					<Button
-						variant={"ghost"}
-						className="flex-end"
-						onClick={increaseHintsUsed}
-					>
+					<Button variant={"ghost"} className="flex-end" onClick={useHint}>
 						Next Hint <Lightbulb />
 					</Button>
 				)}
