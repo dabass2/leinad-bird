@@ -23,3 +23,14 @@ export const increaseHintsUsed = () => {
 		hintsUsed: prev.hintsUsed + 1,
 	}));
 };
+
+// Sync changes to localStorage whenever the store updates
+guessStore.subscribe(() => {
+	localStorage.setItem("defy-user-state", JSON.stringify(guessStore.state));
+});
+
+// To rehydrate on load (before the app mounts)
+const storedState = localStorage.getItem("defy-user-state");
+if (storedState) {
+	guessStore.setState(JSON.parse(storedState));
+}
