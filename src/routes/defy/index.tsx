@@ -25,7 +25,6 @@ export const Route = createFileRoute("/defy/")({
 });
 
 function Defy() {
-	// const data = Route.useLoaderData();
 	const {
 		guesses: storedGuesses,
 		hintsUsed,
@@ -61,6 +60,11 @@ function Defy() {
 				status: result ? "correct" : "wrong",
 			});
 			form.reset({ guess: "" });
+
+			// This is honestly stupid, but it works and I don't feel like finding the correct way rn
+			setTimeout(() => {
+				document.getElementById("defy-input-field")?.focus();
+			}, 10);
 		},
 	});
 
@@ -92,8 +96,10 @@ function Defy() {
 		void refetch();
 	}, [storedGuesses]);
 
+	useEffect(() => {}, []);
+
 	guessStore.subscribe(() => {
-		if (storedGuesses.length >= 5) {
+		if (storedGuesses.length >= 4) {
 			setGameOver();
 		}
 	});
@@ -140,14 +146,13 @@ function Defy() {
 								<Field data-invalid={isInvalid} className="flex-1">
 									<span className="flex flex-row gap-2 items-center">
 										<Input
+											id={`defy-input-field`}
 											autoFocus
 											disabled={
 												guessStore.state.gameOver || guessWordMutation.isPending
 											}
-											id={field.name}
 											name={field.name}
 											value={field.state.value}
-											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
 											className="w-full"
 										/>
