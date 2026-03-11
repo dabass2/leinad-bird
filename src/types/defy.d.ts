@@ -10,6 +10,11 @@ export type TWordOfDayDefinition = {
 	synonyms: (string | undefined)[];
 };
 
+export type TGuess = {
+  word: string;
+  status: "correct" | "close" | "wrong";
+};
+
 // Types for response from dictionary API
 
 interface Pronunciation {
@@ -35,6 +40,7 @@ interface Sense {
 	quotes: Quote[];
 	synonyms: string[];
 	antonyms: string[];
+  translations?: string[];
 	subsenses: Sense[];
 }
 

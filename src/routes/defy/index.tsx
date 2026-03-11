@@ -13,7 +13,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import { z } from "zod";
-import { getWord, guessWord } from "./defy.functions";
+import { getWord, guessWord } from "./-defy.functions";
+import { Loading } from "#/components/Loading";
+import { Error } from "#/components/Error";
+import { appStore } from "#/lib/app-store";
+import { Instructions } from "#/components/defy/Instructions";
+import { GameOver } from "#/components/defy/GameOver";
 
 export const Route = createFileRoute("/defy/")({
 	loader: async () => {
@@ -30,6 +35,7 @@ function Defy() {
 		hintsUsed,
 		gameOver,
 	} = useStore(guessStore, (state) => state);
+  const instructionsSeen = useStore(appStore, (state) => state.instructionsSeen);
 
 	const { data, isPending, isError, refetch } = useQuery({
 		queryKey: ["wordDef"],
@@ -86,9 +92,6 @@ function Defy() {
 		},
 	});
 
-	// Use mutation data if available, otherwise fall back to loader data
-	// TODO: Look into this more, should probably just use react query only
-	// page flickers when a guess is made
 	const wordDef = data;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <no>
@@ -96,10 +99,8 @@ function Defy() {
 		void refetch();
 	}, [storedGuesses]);
 
-	useEffect(() => {}, []);
-
-	guessStore.subscribe(() => {
-		if (storedGuesses.length >= 4) {
+	guessStore.subscribe((newState) => {
+		if (newState.guesses.length >= 5) {
 			setGameOver();
 		}
 	});
@@ -118,15 +119,17 @@ function Defy() {
 	}, [gameOver, storedGuesses]);
 
 	if (isPending) {
-		return null;
+		return <Loading />;
 	}
 
 	if (isError || !wordDef) {
-		return null;
+		return <Error />;
 	}
 
 	return (
 		<main className="grid grid-cols-12 gap-4 p-6 align-middle">
+      <Instructions isOpen={!instructionsSeen} />
+      <GameOver isOpen={gameOver} won={storedGuesses.length < 5} wordOfDay={wordDef.word!} guesses={storedGuesses} hintsUsed={hintsUsed} />
 			<p className="col-span-12 text-center text-6xl mb-2">
 				defy - {formatUtcDate(new Date())}
 			</p>

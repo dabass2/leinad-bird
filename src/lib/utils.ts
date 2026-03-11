@@ -29,3 +29,7 @@ export function formatUtcDate(d: Date) {
 	};
 	return `${utcMonth} ${utcDay}${getSuffix(utcDay)} ${utcYear}`;
 }
+
+export function getCurrentFormattedDate(): string {
+  return new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}).split("T")[0].replaceAll("/", "-")
+}

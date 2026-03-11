@@ -1,3 +1,5 @@
+import { test_res_json } from "#/lib/test_data";
+import { getCurrentFormattedDate } from "#/lib/utils";
 import type { DictionaryResponse, TWordOfDay } from "#/types/defy";
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
 import { generate } from "random-words";
@@ -7,7 +9,7 @@ import z from "zod";
 const cache: Record<string, TWordOfDay> = {};
 
 const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
-	const dateSeed = new Date().toISOString().split("T")[0];
+	const dateSeed = getCurrentFormattedDate();
 
 	// Check cache first
 	if (cache[dateSeed]) {
