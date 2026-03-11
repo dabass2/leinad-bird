@@ -1,4 +1,3 @@
-import { test_res_json } from "#/lib/test_data";
 import { getCurrentFormattedDate } from "#/lib/utils";
 import type { DictionaryResponse, TWordOfDay } from "#/types/defy";
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
