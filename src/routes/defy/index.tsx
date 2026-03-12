@@ -1,10 +1,15 @@
 /** biome-ignore-all lint/correctness/noChildrenProp: <tanstack form wants it like that> */
 
+import { BirdError } from "#/components/BirdError";
+import { GameOver } from "#/components/defy/GameOver";
+import { Instructions } from "#/components/defy/Instructions";
 import { WordDef } from "#/components/defy/WordDef";
 import { WordGuesses } from "#/components/defy/WordGuesses";
+import { Loading } from "#/components/Loading";
 import { Button } from "#/components/ui/button";
 import { Field, FieldDescription } from "#/components/ui/field";
 import { Input } from "#/components/ui/input";
+import { appStore } from "#/lib/app-store";
 import { addGuess, guessStore, setGameOver } from "#/lib/guess-store";
 import { formatUtcDate } from "#/lib/utils";
 import { useForm, useStore } from "@tanstack/react-form";
@@ -14,11 +19,6 @@ import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import { z } from "zod";
 import { getWord, guessWord } from "./-defy.functions";
-import { Loading } from "#/components/Loading";
-import { Error } from "#/components/Error";
-import { appStore } from "#/lib/app-store";
-import { Instructions } from "#/components/defy/Instructions";
-import { GameOver } from "#/components/defy/GameOver";
 
 export const Route = createFileRoute("/defy/")({
 	loader: async () => {
@@ -35,7 +35,10 @@ function Defy() {
 		hintsUsed,
 		gameOver,
 	} = useStore(guessStore, (state) => state);
-  const instructionsSeen = useStore(appStore, (state) => state.instructionsSeen);
+	const instructionsSeen = useStore(
+		appStore,
+		(state) => state.instructionsSeen,
+	);
 
 	const { data, isPending, isError, refetch } = useQuery({
 		queryKey: ["wordDef"],
@@ -123,15 +126,28 @@ function Defy() {
 	}
 
 	if (isError || !wordDef) {
-		return <Error />;
+		return <BirdError />;
 	}
 
 	return (
 		<main className="grid grid-cols-12 gap-4 p-6 align-middle">
-      <Instructions isOpen={!instructionsSeen} />
-      <GameOver isOpen={gameOver} won={storedGuesses.length < 5} wordOfDay={wordDef.word!} guesses={storedGuesses} hintsUsed={hintsUsed} />
+			<Instructions isOpen={!instructionsSeen} />
+			<GameOver
+				isOpen={gameOver}
+				won={storedGuesses.length < 5}
+				wordOfDay={wordDef.word ?? "N/A"}
+				guesses={storedGuesses}
+				hintsUsed={hintsUsed}
+			/>
 			<p className="col-span-12 text-center text-6xl mb-2">
-				defy - {formatUtcDate(new Date())}
+				defy -{" "}
+				{formatUtcDate(
+					new Date(
+						new Date().toLocaleDateString("en-US", {
+							timeZone: "America/Chicago",
+						}),
+					),
+				)}
 			</p>
 			<section className="col-span-full md:col-span-6">
 				<form

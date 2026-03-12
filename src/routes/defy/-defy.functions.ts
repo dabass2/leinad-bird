@@ -25,13 +25,22 @@ const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 	);
 	const res_json: DictionaryResponse = await res.json();
 
+	const sortByWordPresent = (a: string, b: string) => {
+		const hasWordA = a.toLowerCase().includes(word.toLowerCase());
+		const hasWordB = b.toLowerCase().includes(word.toLowerCase());
+
+		return Number(hasWordA) - Number(hasWordB);
+	};
+
 	const wordOfDay: TWordOfDay = {
 		word: res_json.word,
 		wiktionaryUrl: res_json.source.url,
 		senses: res_json.entries.map((entry) => ({
 			partOfSpeech: entry.partOfSpeech,
-			definitions: entry.senses.map((sense) => sense.definition),
-			synonyms: entry.synonyms,
+			definitions: entry.senses
+				.map((sense) => sense.definition)
+				.toSorted(sortByWordPresent),
+			synonyms: entry.synonyms.toSorted(sortByWordPresent),
 		})),
 	};
 
