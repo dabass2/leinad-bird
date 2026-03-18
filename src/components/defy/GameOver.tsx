@@ -1,4 +1,4 @@
-import { formatUtcDate, getCurrentFormattedDate } from "#/lib/utils";
+import { getCurrentFormattedDate } from "#/lib/utils";
 import type { TGuess } from "#/types/defy";
 import {
 	AlertDialog,
@@ -31,7 +31,7 @@ export function GameOver({
 	const [openOverride, setOpenOverride] = useState<boolean>(false);
 
 	const copyResults = async () => {
-		await navigator.clipboard.writeText(`defy | ${formatUtcDate(new Date(getCurrentFormattedDate()))}
+		await navigator.clipboard.writeText(`defy | ${getCurrentFormattedDate()}
 -------------------
 Guesses 🤔: ${guesses.map((guess) => (guess.status === "correct" ? "🟩" : "🟥")).join("")}
 Hints Used 💡: ${hintsUsed}
