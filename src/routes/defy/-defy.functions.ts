@@ -128,7 +128,7 @@ export const getWord = createServerFn({
 					index < numHintsToShow ? def : undefined,
 				),
 				synonyms: sense.synonyms
-					.filter((syn) => syn !== wordOfDay.word)
+					.filter((syn) => !syn?.includes(wordOfDay.word ?? ""))
 					.map((syn, index) => (index < numHintsToShow ? syn : undefined)),
 			})),
 		};
