@@ -34,6 +34,7 @@ function Defy() {
 		guesses: storedGuesses,
 		hintsUsed,
 		gameOver,
+		gameWon,
 	} = useStore(guessStore, (state) => state);
 	const instructionsSeen = useStore(
 		appStore,
@@ -62,7 +63,7 @@ function Defy() {
 		},
 		onSuccess: async (result) => {
 			if (result) {
-				setGameOver();
+				setGameOver(true);
 			}
 			addGuess({
 				word: form.getFieldValue("guess"),
@@ -103,14 +104,13 @@ function Defy() {
 	}, [storedGuesses]);
 
 	guessStore.subscribe((newState) => {
-		if (newState.guesses.length >= 5) {
-			setGameOver();
+		if (newState.guesses.length >= 5 && !newState.gameWon) {
+			setGameOver(false);
 		}
 	});
 
 	useEffect(() => {
-		if (gameOver && storedGuesses.length < 5) {
-			setGameOver();
+		if (gameOver && gameWon) {
 			confetti({
 				particleCount: 200,
 				startVelocity: 60,
@@ -119,7 +119,7 @@ function Defy() {
 				colors: ["#4ade80", "#22d3ee", "#fbbf24", "#f87171", "#a78bfa"],
 			});
 		}
-	}, [gameOver, storedGuesses]);
+	}, [gameOver, gameWon]);
 
 	if (isPending) {
 		return <Loading />;
@@ -134,7 +134,7 @@ function Defy() {
 			<Instructions isOpen={!instructionsSeen} />
 			<GameOver
 				isOpen={gameOver}
-				won={storedGuesses.length < 5}
+				won={gameWon}
 				wordOfDay={wordDef.word ?? "N/A"}
 				guesses={storedGuesses}
 				hintsUsed={hintsUsed}
