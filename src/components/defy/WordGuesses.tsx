@@ -9,7 +9,7 @@ export function WordGuesses() {
 	return (
 		<section className="col-span-4">
 			<h2 className="text-[24px] font-semibold">
-				Current Guesses ({guesses.length}/5)
+				Guesses ({guesses.length}/5)
 			</h2>
 			<Separator className="my-2" />
 			<div className="flex flex-col gap-4 mt-4">

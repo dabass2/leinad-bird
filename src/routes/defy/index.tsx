@@ -150,54 +150,59 @@ function Defy() {
 				)}
 			</p>
 			<section className="col-span-full md:col-span-6">
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						form.handleSubmit();
-					}}
-				>
-					<form.Field
-						name="guess"
-						children={(field) => {
-							const isInvalid =
-								field.state.meta.isTouched && !field.state.meta.isValid;
-							return (
-								<Field data-invalid={isInvalid} className="flex-1">
-									<span className="flex flex-row gap-2 items-center">
-										<Input
-											id={`defy-input-field`}
-											autoFocus
-											disabled={
-												guessStore.state.gameOver || guessWordMutation.isPending
-											}
-											name={field.name}
-											value={field.state.value}
-											onChange={(e) => field.handleChange(e.target.value)}
-											className="w-full"
-										/>
-										<Button
-											disabled={
-												guessWordMutation.isPending || guessStore.state.gameOver
-											}
-										>
-											Guess
-										</Button>
-									</span>
-									<FieldDescription
-										className={`text-[--guess-wrong] ${isInvalid ? "visible" : "invisible"}`}
-									>
-										{isInvalid
-											? field.state.meta.errors
-													.map((err) => err?.message)
-													.filter((err) => err)
-													.join(", ")
-											: "Please enter your guess"}
-									</FieldDescription>
-								</Field>
-							);
+				{!gameOver && (
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							form.handleSubmit();
 						}}
-					/>
-				</form>
+					>
+						<form.Field
+							name="guess"
+							children={(field) => {
+								const isInvalid =
+									field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid} className="flex-1">
+										<span className="flex flex-row gap-2 items-center">
+											<Input
+												id={`defy-input-field`}
+												autoFocus
+												disabled={
+													guessStore.state.gameOver ||
+													guessWordMutation.isPending
+												}
+												name={field.name}
+												value={field.state.value}
+												onChange={(e) => field.handleChange(e.target.value)}
+												className="w-full"
+											/>
+											<Button
+												disabled={
+													guessWordMutation.isPending ||
+													guessStore.state.gameOver
+												}
+											>
+												Guess
+											</Button>
+										</span>
+										<FieldDescription
+											className={`text-[--guess-wrong] ${isInvalid ? "visible" : "invisible"}`}
+										>
+											{isInvalid
+												? field.state.meta.errors
+														.map((err) => err?.message)
+														.filter((err) => err)
+														.join(", ")
+												: "Please enter your guess"}
+										</FieldDescription>
+									</Field>
+								);
+							}}
+						/>
+					</form>
+				)}
+
 				<WordGuesses />
 			</section>
 
