@@ -130,7 +130,7 @@ function Defy() {
 	}
 
 	return (
-		<main className="grid grid-cols-12 gap-4 p-6 align-middle">
+		<div className="grid grid-cols-12 gap-4 p-6 align-middle">
 			<Instructions isOpen={!instructionsSeen} />
 			<GameOver
 				isOpen={gameOver}
@@ -204,6 +204,6 @@ function Defy() {
 			<section className="col-span-full md:col-span-6">
 				<WordDef wordDef={wordDef} />
 			</section>
-		</main>
+		</div>
 	);
 }

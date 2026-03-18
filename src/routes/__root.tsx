@@ -47,12 +47,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
 				<HeadContent />
 			</head>
-			<body className="flex flex-col h-screen font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
+			<body className="flex flex-col font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
 				<TanStackQueryProvider>
 					<Header />
-          <main className="flex-1">
-            {children}
-          </main>
+					<div className="flex-1">{children}</div>
 					<Footer />
 				</TanStackQueryProvider>
 				<Scripts />
