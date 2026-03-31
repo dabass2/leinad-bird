@@ -4,7 +4,7 @@ import {
 	incrementUsage,
 	updateApiStatus,
 } from "#/db/queries";
-import { getCurrentFormattedDate } from "#/lib/utils";
+import { getCentralDayOfWeek, getCurrentFormattedDate } from "#/lib/utils";
 import type { DictionaryResponse, TWordOfDay } from "#/types/defy";
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
 import z from "zod";
@@ -31,7 +31,7 @@ const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 		return cache[dateSeed];
 	}
 
-	const dayOfWeek = new Date().getDay();
+	const dayOfWeek = getCentralDayOfWeek();
 	const freqRange = difficultyMapping[dayOfWeek];
 
 	let attempts = 0;

@@ -31,5 +31,19 @@ export function formatUtcDate(d: Date) {
 }
 
 export function getCurrentFormattedDate(): string {
-  return new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}).split("T")[0].replaceAll("/", "-")
+	const chicagoDate = new Date(
+		new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
+	);
+	const [month, day, year] = chicagoDate.toLocaleDateString("en-US").split("/");
+	return `${month}-${day}-${year}`;
+}
+
+export function getCentralDate(): Date {
+	return new Date(
+		new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
+	);
+}
+
+export function getCentralDayOfWeek(): number {
+	return getCentralDate().getDay();
 }
