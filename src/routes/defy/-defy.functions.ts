@@ -1,53 +1,118 @@
+/** biome-ignore-all assist/source/organizeImports: <auto-sorter is messing up, so just ignore> */
+import {
+	getAndPrepareDailyWord,
+	incrementUsage,
+	updateApiStatus,
+} from "#/db/queries";
 import { getCurrentFormattedDate } from "#/lib/utils";
 import type { DictionaryResponse, TWordOfDay } from "#/types/defy";
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
-import { generate } from "random-words";
 import z from "zod";
 
 // Super advanced cache
 const cache: Record<string, TWordOfDay> = {};
 
+const difficultyMapping: Record<number, readonly number[]> = {
+	0: [800_000, 900_000] as const, // Sunday - Hardest
+	1: [8_000_000, 9_000_000] as const, // Monday - Easiest
+	2: [7_000_000, 8_500_000] as const, // Tuesday - Easy
+	3: [5_000_000, 7_500_000] as const, // Wednesday - Medium
+	4: [3_000_000, 5_000_000] as const, // Thursday - Medium-Hard
+	5: [1_000_000, 3_000_000] as const, // Friday - Hard
+	6: [850_000, 1_000_000] as const, // Saturday - Very Hard
+};
+
+const MAX_RETRIES = 10;
+
 const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 	const dateSeed = getCurrentFormattedDate();
 
-	// Check cache first
 	if (cache[dateSeed]) {
-		console.log(`Using cached result for ${dateSeed}`);
 		return cache[dateSeed];
 	}
 
-	console.log(`Generating word of the day for ${dateSeed}...`);
-	const word = generate({ minLength: 4, seed: dateSeed, exactly: 1 })[0];
-	console.log(word);
-	// TODO: Add in retry if word doesn't exist
-	const res = await fetch(
-		`https://freedictionaryapi.com/api/v1/entries/en/${word}`,
+	const dayOfWeek = new Date().getDay();
+	const freqRange = difficultyMapping[dayOfWeek];
+
+	let attempts = 0;
+
+	while (attempts < MAX_RETRIES) {
+		attempts++;
+
+		const wordFromDb = await getAndPrepareDailyWord(freqRange[0], freqRange[1]);
+		if (!wordFromDb) break;
+
+		const word = wordFromDb.word;
+		console.log(
+			`Attempt ${attempts}: Selected word "${word}" from DB (rank ${wordFromDb.rank})`,
+		);
+
+		try {
+			const res = await fetch(
+				`https://freedictionaryapi.com/api/v1/entries/en/${word}`,
+			);
+
+			if (!res.ok) {
+				// If it's a 500 or 429, don't blame the word, just retry the loop
+				console.error(`API temporary error: ${res.status}`);
+				continue;
+			}
+
+			const res_json: DictionaryResponse = await res.json();
+
+			// THE CRITICAL CHECK: If body is null or entries is an empty array
+			if (!res_json || !res_json.entries || res_json.entries.length < 1) {
+				console.warn(`Word "${word}" has no entries. Marking as invalid.`);
+				await updateApiStatus(wordFromDb.rank, false);
+				continue; // Try again with a new word from the DB
+			}
+
+			// If we got here, the word is good. Time to commit!
+			await incrementUsage(wordFromDb.rank);
+
+			const sortByWordPresent = (a: string, b: string) => {
+				const hasWordA = a.toLowerCase().includes(word.toLowerCase());
+				const hasWordB = b.toLowerCase().includes(word.toLowerCase());
+				return Number(hasWordA) - Number(hasWordB);
+			};
+
+			const blacklistedTags = ["form of", "plural"];
+
+			const wordOfDay: TWordOfDay = {
+				word: res_json.word,
+				wiktionaryUrl: res_json.source.url,
+				senses: res_json.entries.map((entry) => ({
+					partOfSpeech: entry.partOfSpeech,
+					definitions: (entry.senses || [])
+						.filter(
+							(sense) =>
+								!blacklistedTags.some((tag) => sense.tags.includes(tag)),
+						)
+						.map((sense) => sense.definition)
+						.toSorted(sortByWordPresent),
+					synonyms: (entry.synonyms || []).toSorted(sortByWordPresent),
+				})),
+			};
+
+			if (!wordOfDay.senses.some((sense) => sense.definitions.length > 0)) {
+				console.warn(
+					`Word "${word}" has no valid definitions after filtering. Marking as invalid.`,
+				);
+				await updateApiStatus(wordFromDb.rank, false);
+				continue; // Try again with a new word from the DB
+			}
+
+			// Success! Cache and return.
+			cache[dateSeed] = wordOfDay;
+			return wordOfDay;
+		} catch (err) {
+			console.error(`Attempt ${attempts} network/parse error:`, err);
+		}
+	}
+
+	throw new Error(
+		`Exhausted ${MAX_RETRIES} attempts without finding a valid word.`,
 	);
-	const res_json: DictionaryResponse = await res.json();
-
-	const sortByWordPresent = (a: string, b: string) => {
-		const hasWordA = a.toLowerCase().includes(word.toLowerCase());
-		const hasWordB = b.toLowerCase().includes(word.toLowerCase());
-
-		return Number(hasWordA) - Number(hasWordB);
-	};
-
-	const wordOfDay: TWordOfDay = {
-		word: res_json.word,
-		wiktionaryUrl: res_json.source.url,
-		senses: res_json.entries.map((entry) => ({
-			partOfSpeech: entry.partOfSpeech,
-			definitions: entry.senses
-				.map((sense) => sense.definition)
-				.toSorted(sortByWordPresent),
-			synonyms: entry.synonyms.toSorted(sortByWordPresent),
-		})),
-	};
-
-	// Store in cache
-	cache[dateSeed] = wordOfDay;
-
-	return wordOfDay;
 });
 
 // Function used to actually make a guess, really just takes in
