@@ -33,6 +33,9 @@ COPY --from=builder /app/.output ./.output
 # Expose the port your app runs on (default is often 3000)
 EXPOSE 3000
 
+# Ensure node user has ownership of app dir and pre-existing DB file (from mount or build cache)
+RUN chown -R node:node /app /app/bird.db || true
+
 USER node
 
 # Command to run the application
