@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TypersIndexRouteImport } from './routes/typers/index'
 import { Route as DefyIndexRouteImport } from './routes/defy/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TypersIndexRoute = TypersIndexRouteImport.update({
+  id: '/typers/',
+  path: '/typers/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DefyIndexRoute = DefyIndexRouteImport.update({
@@ -26,27 +32,31 @@ const DefyIndexRoute = DefyIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/defy/': typeof DefyIndexRoute
+  '/typers/': typeof TypersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/defy': typeof DefyIndexRoute
+  '/typers': typeof TypersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/defy/': typeof DefyIndexRoute
+  '/typers/': typeof TypersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/defy/'
+  fullPaths: '/' | '/defy/' | '/typers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/defy'
-  id: '__root__' | '/' | '/defy/'
+  to: '/' | '/defy' | '/typers'
+  id: '__root__' | '/' | '/defy/' | '/typers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DefyIndexRoute: typeof DefyIndexRoute
+  TypersIndexRoute: typeof TypersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/typers/': {
+      id: '/typers/'
+      path: '/typers'
+      fullPath: '/typers/'
+      preLoaderRoute: typeof TypersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/defy/': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DefyIndexRoute: DefyIndexRoute,
+  TypersIndexRoute: TypersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

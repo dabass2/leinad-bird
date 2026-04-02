@@ -26,6 +26,13 @@ export default function Header() {
 					>
 						Defy
 					</Link>
+					<Link
+						to="/typers"
+						className="nav-link"
+						activeProps={{ className: "nav-link is-active" }}
+					>
+						Typers
+					</Link>
 				</div>
 			</nav>
 		</header>
