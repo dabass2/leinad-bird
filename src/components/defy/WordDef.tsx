@@ -12,6 +12,7 @@ export type WordDefProps = {
 };
 
 export function WordDef({ wordDef }: WordDefProps) {
+	const gameOver = useStore(guessStore, (state) => state.gameOver);
 	const numberOfGuesses = useStore(guessStore, (state) => state.guesses.length);
 
 	// TODO: Look into it, looks like queryFn is required to be provided
@@ -52,7 +53,7 @@ export function WordDef({ wordDef }: WordDefProps) {
 					</Button>
 				</div>
 
-				{numberOfGuesses >= 4 && (
+				{numberOfGuesses >= 4 && !gameOver && (
 					<Button variant={"ghost"} className="flex-end" onClick={useHint}>
 						Next Hint <Lightbulb />
 					</Button>
@@ -64,6 +65,8 @@ export function WordDef({ wordDef }: WordDefProps) {
 			<p className="font-semibold pb-2">Parts of Speech</p>
 
 			{wordDef.senses.map((sense, index) => {
+				if (!sense.definitions.length) return null;
+
 				const defsLeftHidden = sense.definitions.filter((d) => !d).length;
 				const revealedDefs = sense.definitions.filter((d) => !!d);
 

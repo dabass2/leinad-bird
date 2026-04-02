@@ -59,7 +59,7 @@ ${window.location.href}`);
 						onClick={() => setOpenOverride(true)}
 						variant="outline"
 					>
-						View Results
+						View Guesses
 					</AlertDialogCancel>
 				</AlertDialogFooter>
 			</AlertDialogContent>
