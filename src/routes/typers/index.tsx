@@ -191,16 +191,17 @@ function Game({ width, height }: { width: number; height: number }) {
 
 export const Route = createFileRoute("/typers/")({
 	component: RouteComponent,
+	ssr: false,
 });
 
 function RouteComponent() {
-	const [width, setWidth] = useState(window.innerWidth);
-	const [height, setHeight] = useState(window.innerHeight - 100);
+	const [width, setWidth] = useState(window?.innerWidth);
+	const [height, setHeight] = useState(window?.innerHeight - 100);
 
 	useEffect(() => {
 		const handleResize = () => {
-			setWidth(window.innerWidth);
-			setHeight(window.innerHeight);
+			setWidth(window?.innerWidth);
+			setHeight(window?.innerHeight - 100);
 		};
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
