@@ -36,16 +36,23 @@ const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 
 	let attempts = 0;
 
-	while (attempts < MAX_RETRIES) {
-		attempts++;
+	while (attempts <= MAX_RETRIES) {
+		let word = "";
+		let wordFromDb = null;
+		if (attempts === MAX_RETRIES) {
+			word = "with";
+		} else {
+			attempts++;
+			wordFromDb = await getAndPrepareDailyWord(freqRange[0], freqRange[1]);
 
-		const wordFromDb = await getAndPrepareDailyWord(freqRange[0], freqRange[1]);
+			word = wordFromDb.word.toLowerCase().trim();
+
+			console.log(
+				`Attempt ${attempts}: Selected word "${word}" from DB (rank ${wordFromDb.rank})`,
+			);
+		}
+
 		if (!wordFromDb) break;
-
-		const word = wordFromDb.word;
-		console.log(
-			`Attempt ${attempts}: Selected word "${word}" from DB (rank ${wordFromDb.rank})`,
-		);
 
 		try {
 			const res = await fetch(
@@ -94,11 +101,22 @@ const getWordOfDay = createServerOnlyFn(async (): Promise<TWordOfDay> => {
 				})),
 			};
 
-			if (!wordOfDay.senses.some((sense) => sense.definitions.length > 0)) {
+			const totalDefinitions = wordOfDay.senses.reduce(
+				(sum, sense) => sum + sense.definitions.length,
+				0,
+			);
+			if (totalDefinitions === 0) {
 				console.warn(
 					`Word "${word}" has no valid definitions after filtering. Marking as invalid.`,
 				);
 				await updateApiStatus(wordFromDb.rank, false);
+				continue; // Try again with a new word from the DB
+			}
+
+			if (totalDefinitions < 3 && ![0, 6].includes(dayOfWeek)) {
+				console.warn(
+					`Word "${word}" has only ${totalDefinitions} definitions, which is too few for today. Retrying.`,
+				);
 				continue; // Try again with a new word from the DB
 			}
 

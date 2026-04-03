@@ -102,13 +102,11 @@ function Game({ width, height }: { width: number; height: number }) {
 			const wordScreenSize = (size * text.length) / 2;
 			const minSpacing = 50;
 
-			let pos: number;
+			let pos: number = Math.floor(Math.random() * width);
 			let validPos = false;
 			let attempts = 0;
 
 			while (!validPos && attempts < 10) {
-				pos = Math.floor(Math.random() * width);
-
 				// Clamp position to keep word on screen
 				if (pos - wordScreenSize < 0) {
 					pos = wordScreenSize * 0.5;
