@@ -1,4 +1,4 @@
-name: deploy-leinad-fe
+name: deploy-bird
 on:
   push:
     branches: ["master", "main"]
