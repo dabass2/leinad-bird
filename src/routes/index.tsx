@@ -8,34 +8,26 @@ function App() {
 			<section className="island-shell rise-in relative overflow-hidden rounded-4xl px-6 py-10 sm:px-10 sm:py-14">
 				<div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
 				<div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-				<p className="island-kicker mb-3">I haven't done anything here yet</p>
+				<p className="island-kicker mb-3">bad ideas really dumb</p>
 				<h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-(--sea-ink) sm:text-6xl">
-					This is the home page and will have more stuff
+					leinad bird
 				</h1>
 				<p className="mb-8 max-w-2xl text-base text-(--sea-ink-soft) sm:text-lg">
-					Please leave the page there really isn't anything here I need to
-					actually migrate bird and all the other random things I've made to
-					this new repo
+					Collection of side projects and experiments that I decide to build and
+					open source for fun. Built with TanStack Router, React, Tailwind, and
+					a bunch of other stuff.
 				</p>
 			</section>
 
-			<section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<section className="mt-8 grid gap-4 sm:grid-cols-2">
 				{[
 					[
-						"Type-Safe Routing",
-						"Routes and links stay in sync across every page.",
+						"defy",
+						"A word game where you have to guess the word of the day from only its definitions and synonyms.",
 					],
 					[
-						"Server Functions",
-						"Call server code from your UI without creating API boilerplate.",
-					],
-					[
-						"Streaming by Default",
-						"Ship progressively rendered responses for faster experiences.",
-					],
-					[
-						"Tailwind Native",
-						"Design quickly with utility-first styling and custom tokens.",
+						"typers",
+						"A typing game where words fall from the top of the screen and you have to type them before they reach the bottom.",
 					],
 				].map(([title, desc], index) => (
 					<article
