@@ -20,7 +20,6 @@ function Game({ width, height }: { width: number; height: number }) {
 	const [numMissed, setNumMissed] = useState(0);
 	const [soundOn, setSoundOn] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
-	const [noSpawnZone, setNoSpawnZone] = useState([0, 0]);
 
 	const numWordsToSpawn = Math.max(
 		Math.floor(3 * Math.log10(numMissed + numCorrect * (0.01 * width))),
@@ -97,21 +96,39 @@ function Game({ width, height }: { width: number; height: number }) {
 			size: number;
 		}[];
 		if (wordsRef.current.length < numWordsToSpawn) {
-			let pos: number;
-			do {
-				pos = Math.floor(Math.random() * width);
-			} while (pos >= noSpawnZone[0] && pos <= noSpawnZone[1]);
-			setNoSpawnZone([pos - 100, pos + 100]);
 			const maxLength = Math.min(4 + Math.floor(numCorrect / 5), 15);
 			const text = generate({ exactly: 1, maxLength })[0];
 			const size = 70;
 			const wordScreenSize = (size * text.length) / 2;
-			if (pos - wordScreenSize < 0) {
-				pos += wordScreenSize * 0.5;
-			} else if (pos + wordScreenSize > width) {
-				pos -= wordScreenSize * 0.5;
+			const minSpacing = 50;
+
+			let pos: number;
+			let validPos = false;
+			let attempts = 0;
+
+			while (!validPos && attempts < 10) {
+				pos = Math.floor(Math.random() * width);
+
+				// Clamp position to keep word on screen
+				if (pos - wordScreenSize < 0) {
+					pos = wordScreenSize * 0.5;
+				} else if (pos + wordScreenSize > width) {
+					pos = width - wordScreenSize * 0.5;
+				}
+
+				// Check if this position overlaps with any existing word
+				validPos = !wordsRef.current.some((w) => {
+					const distance = Math.abs(pos - w.x);
+					const wWordScreenSize = (w.size * w.text.length) / 2;
+					return distance < wordScreenSize + wWordScreenSize + minSpacing;
+				});
+
+				attempts++;
 			}
-			wordsRef.current.push({ text, x: pos, y: 0, size });
+
+			if (validPos) {
+				wordsRef.current.push({ text, x: pos, y: 0, size });
+			}
 		}
 		setTick((t) => t + 1);
 	});
