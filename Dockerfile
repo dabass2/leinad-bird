@@ -1,43 +1,41 @@
 # Stage 1: Builder
 FROM node:24-alpine AS builder
 
-# Set working directory
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine 
+# to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if using npm ci)
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
 COPY . .
-
-# Build the application
-# The build command depends on your project setup, often 'npm run build' which uses Vite and Nitro
 RUN npm run build
 
-# Stage 2: Production server
+# Stage 2: Production
 FROM node:24-alpine AS production
 
-# Set working directory
 WORKDIR /app
 
-# Copy only necessary files from the builder stage
-# Adjust the source path based on your build output directory (commonly ./.output or ./dist)
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-# Assuming the build output is in ./.output
+# Set production environment
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# TanStack Start / Nitro creates a standalone server in .output
+# This contains its own minimal node_modules and the bundled server code.
 COPY --from=builder /app/.output ./.output
 
-# Expose the port your app runs on (default is often 3000)
-EXPOSE 3000
+# If your app needs the public assets (often bundled in .output/public)
+# Nitro handles this automatically via the server entry point.
 
-# Ensure node user has ownership of app dir and pre-existing DB file (from mount or build cache)
-RUN chown -R node:node /app /app/bird.db || true
+# Handle the SQLite DB file permissions
+# We touch it to ensure it exists so we can chown it before the volume mounts.
+RUN touch bird.db && chown -R node:node /app
 
 USER node
 
-# Command to run the application
-# Adjust the file path if your server entry point is different (e.g., dist/server.js)
+EXPOSE 3000
+
+# Start the Nitro server
 CMD ["node", ".output/server/index.mjs"]
