@@ -13,3 +13,6 @@ __unconfig*
 todos.json
 test_data.ts
 *.db
+*.ds-*
+*ds-bundle*
+*design*
