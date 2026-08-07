@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type TTypedWordInputParams = {
 	disabled: boolean;
@@ -8,7 +9,10 @@ export type TTypedWordInputParams = {
 
 export type TTypedWordInput = {
 	typedWord: string;
+	inputRef: React.RefObject<HTMLInputElement | null>;
 	clearTypedWord: () => void;
+	handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+	handleKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export function useTypedWordInput({
@@ -17,28 +21,34 @@ export function useTypedWordInput({
 	onCheatReset,
 }: TTypedWordInputParams): TTypedWordInput {
 	const [typedWord, setTypedWord] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null);
 	const clearTypedWord = useCallback(() => setTypedWord(""), []);
 
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (disabled) return;
+	const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+		setTypedWord(e.target.value);
+	}, []);
 
+	const handleKeyDown = useCallback(
+		(e: KeyboardEvent<HTMLInputElement>) => {
+			if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "f") {
+				e.preventDefault();
+				setTypedWord("");
+				onCheatReset();
+				return;
+			}
 			if (e.key === "Enter") {
 				onSubmit(typedWord);
 				setTypedWord("");
-			} else if (e.key === "Backspace") {
-				setTypedWord((prev) => prev.slice(0, -1));
-			} else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
-				setTypedWord((prev) => prev + e.key);
 			}
-			if (e.ctrlKey && e.shiftKey && e.key === "F") {
-				setTypedWord("");
-				onCheatReset();
-			}
-		};
-		window.addEventListener("keydown", handleKeyDown);
-		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [disabled, onSubmit, onCheatReset, typedWord]);
+		},
+		[typedWord, onSubmit, onCheatReset],
+	);
 
-	return { typedWord, clearTypedWord };
+	useEffect(() => {
+		if (!disabled) {
+			inputRef.current?.focus();
+		}
+	}, [disabled]);
+
+	return { typedWord, inputRef, clearTypedWord, handleChange, handleKeyDown };
 }

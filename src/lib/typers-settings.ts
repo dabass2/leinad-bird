@@ -10,10 +10,10 @@ export const VIEWPORT_BOUNDS = {
 export const SCALE_BOUNDS = { min: 0.75, max: 1.5 } as const;
 
 export const HEADER_FOOTER_CHROME_PX = 100;
+export const TYPED_INPUT_BAR_HEIGHT = 72;
 
 export const BASE_WORD_FONT_SIZE = 70;
 export const BASE_MIN_WORD_SPACING = 50;
-export const BASE_TYPED_WORD_FONT_SIZE = 50;
 export const BASE_HUD_FONT_SIZE = 20;
 export const BASE_GAME_OVER_FONT_SIZE = 50;
 // tuned so a word at BASE_WORD_FONT_SIZE falls ~2.8px/frame at speedMultiplier 1,
@@ -49,7 +49,6 @@ export function getTypersSettings(
 	return {
 		wordFontSize: BASE_WORD_FONT_SIZE * scale,
 		minWordSpacing: BASE_MIN_WORD_SPACING * scale,
-		typedWordFontSize: BASE_TYPED_WORD_FONT_SIZE * scale,
 		hudFontSize: BASE_HUD_FONT_SIZE * scale,
 		gameOverFontSize: BASE_GAME_OVER_FONT_SIZE * scale,
 		speedMultiplier: 1 + numCorrect * 0.03 + elapsedSeconds * 0.01,

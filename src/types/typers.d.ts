@@ -8,7 +8,6 @@ export type TFallingWord = {
 export type TTypersSettings = {
 	wordFontSize: number;
 	minWordSpacing: number;
-	typedWordFontSize: number;
 	hudFontSize: number;
 	gameOverFontSize: number;
 	speedMultiplier: number;
