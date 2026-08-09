@@ -4,9 +4,10 @@ import type { TFallingWord } from "#/types/typers";
 export type TFallingWords = {
 	words: TFallingWord[];
 	width: number;
+	color: string;
 };
 
-export function FallingWords({ words, width }: TFallingWords) {
+export function FallingWords({ words, width, color }: TFallingWords) {
 	return (
 		<>
 			{words.map((w, i) => (
@@ -16,7 +17,7 @@ export function FallingWords({ words, width }: TFallingWords) {
 					x={w.x}
 					y={w.y}
 					fontSize={w.size}
-					fill="white"
+					fill={color}
 					width={width}
 					offsetX={width / 2}
 					offsetY={w.size / 2}

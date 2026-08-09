@@ -1,12 +1,18 @@
+import { useStore } from "@tanstack/react-store";
 import { generate } from "random-words";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+	BASE_MISS_DAMAGE,
+	DAMAGE_PER_CHAR,
 	findSpawnPosition,
-	GAME_OVER_MISS_RATIO,
 	getFallDelta,
 	getNumWordsToSpawn,
 	getTypersSettings,
+	HEALTH_MAX,
+	POINTS_PER_CHAR,
+	type TDifficulty,
 } from "#/lib/typers-settings";
+import { typersSettingsStore } from "#/lib/typers-settings-store";
 import type { TFallingWord } from "#/types/typers";
 
 export type TTypersGameLoopParams = {
@@ -17,10 +23,14 @@ export type TTypersGameLoopParams = {
 
 export type TTypersGameLoop = {
 	words: TFallingWord[];
-	numCorrect: number;
-	numMissed: number;
+	points: number;
+	health: number;
+	maxHealth: number;
+	wordsCaught: number;
 	gameOver: boolean;
 	elapsedSeconds: number;
+	timeRemainingSeconds: number | null;
+	difficulty: TDifficulty;
 	submitTypedWord: (word: string) => boolean;
 	reset: () => void;
 };
@@ -32,10 +42,18 @@ export function useTypersGameLoop({
 }: TTypersGameLoopParams): TTypersGameLoop {
 	const wordsRef = useRef<TFallingWord[]>([]);
 	const startTimeRef = useRef(Date.now());
-	const [numCorrect, setNumCorrect] = useState(0);
-	const [numMissed, setNumMissed] = useState(0);
+	// tracks words successfully caught; drives difficulty pacing only, not displayed
+	const [wordsCaught, setWordsCaught] = useState(0);
+	const [points, setPoints] = useState(0);
+	const [health, setHealth] = useState(HEALTH_MAX);
 	const [gameOver, setGameOver] = useState(false);
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
+	const difficulty = useStore(typersSettingsStore, (s) => s.difficulty);
+	const timeLengthSeconds = useStore(
+		typersSettingsStore,
+		(s) => s.timeLengthSeconds,
+	);
+	const endlessMode = useStore(typersSettingsStore, (s) => s.endlessMode);
 
 	const submitTypedWord = useCallback((word: string) => {
 		const trimmed = word.trim();
@@ -43,14 +61,16 @@ export function useTypersGameLoop({
 		wordsRef.current = wordsRef.current.filter((w) => w.text !== trimmed);
 		const matched = wordsRef.current.length < initLength;
 		if (matched) {
-			setNumCorrect((c) => c + 1);
+			setWordsCaught((c) => c + 1);
+			setPoints((p) => p + trimmed.length * POINTS_PER_CHAR);
 		}
 		return matched;
 	}, []);
 
 	const reset = useCallback(() => {
-		setNumCorrect(0);
-		setNumMissed(0);
+		setWordsCaught(0);
+		setPoints(0);
+		setHealth(HEALTH_MAX);
 		wordsRef.current = [];
 		startTimeRef.current = Date.now();
 		setElapsedSeconds(0);
@@ -58,26 +78,39 @@ export function useTypersGameLoop({
 	}, []);
 
 	useEffect(() => {
-		if (
-			numMissed > 0 &&
-			numMissed > Math.floor((numMissed + numCorrect) * GAME_OVER_MISS_RATIO)
-		) {
+		if (health <= 0) {
 			setGameOver(true);
 		}
-	}, [numMissed, numCorrect]);
+	}, [health]);
+
+	const timeRemainingSeconds = endlessMode
+		? null
+		: Math.max(0, Math.ceil(timeLengthSeconds - elapsedSeconds));
+
+	useEffect(() => {
+		if (!endlessMode && elapsedSeconds >= timeLengthSeconds) {
+			setGameOver(true);
+		}
+	}, [elapsedSeconds, endlessMode, timeLengthSeconds]);
 
 	useEffect(() => {
 		if (gameOver || width === 0 || height === 0) return;
 		let rafId = 0;
 		const step = () => {
 			const elapsed = (Date.now() - startTimeRef.current) / 1000;
-			const settings = getTypersSettings(scale, elapsed, numCorrect);
+			const settings = getTypersSettings(
+				scale,
+				elapsed,
+				wordsCaught,
+				difficulty,
+			);
 
 			wordsRef.current = wordsRef.current
 				.map((w) => {
 					const newY = w.y + getFallDelta(w.size, settings.speedMultiplier);
 					if (newY > height) {
-						setNumMissed((m) => m + 1);
+						const damage = BASE_MISS_DAMAGE + w.text.length * DAMAGE_PER_CHAR;
+						setHealth((h) => Math.max(0, h - damage));
 						return null;
 					}
 					return { ...w, y: newY };
@@ -86,7 +119,7 @@ export function useTypersGameLoop({
 
 			const numWordsToSpawn = getNumWordsToSpawn(
 				elapsed,
-				numCorrect,
+				wordsCaught,
 				settings.numWordsToSpawnCap,
 			);
 
@@ -117,14 +150,18 @@ export function useTypersGameLoop({
 		};
 		rafId = requestAnimationFrame(step);
 		return () => cancelAnimationFrame(rafId);
-	}, [gameOver, width, height, numCorrect, scale]);
+	}, [gameOver, width, height, wordsCaught, scale, difficulty]);
 
 	return {
 		words: wordsRef.current,
-		numCorrect,
-		numMissed,
+		points,
+		health,
+		maxHealth: HEALTH_MAX,
+		wordsCaught,
 		gameOver,
 		elapsedSeconds,
+		timeRemainingSeconds,
+		difficulty,
 		submitTypedWord,
 		reset,
 	};

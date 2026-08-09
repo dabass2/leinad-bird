@@ -4,11 +4,12 @@ import {
 	getClampedScale,
 	getTypersSettings,
 	TYPED_INPUT_BAR_HEIGHT,
+	TYPERS_HEADER_HEIGHT,
 } from "#/lib/typers-settings";
 import { FallingWords } from "./FallingWords";
 import { GameOverOverlay } from "./GameOverOverlay";
-import { Hud } from "./Hud";
 import { TypedWordInput } from "./TypedWordInput";
+import { TypersHeader } from "./TypersHeader";
 import { useTypedWordInput } from "./useTypedWordInput";
 import { useTypersGameLoop } from "./useTypersGameLoop";
 
@@ -18,9 +19,21 @@ function playSound(url: string) {
 	new Audio(url).play();
 }
 
+function getSeaInkColor(): string {
+	return (
+		getComputedStyle(document.documentElement)
+			.getPropertyValue("--sea-ink")
+			.trim() || "black"
+	);
+}
+
 export function TypersGame({ width, height }: TTypersGame) {
 	const [soundOn, setSoundOn] = useState(false);
-	const stageHeight = Math.max(height - TYPED_INPUT_BAR_HEIGHT, 0);
+	const [wordColor] = useState(getSeaInkColor);
+	const stageHeight = Math.max(
+		height - TYPED_INPUT_BAR_HEIGHT - TYPERS_HEADER_HEIGHT,
+		0,
+	);
 	const scale = useMemo(
 		() => getClampedScale(width, stageHeight),
 		[width, stageHeight],
@@ -65,39 +78,50 @@ export function TypersGame({ width, height }: TTypersGame) {
 	const settings = getTypersSettings(
 		scale,
 		gameLoop.elapsedSeconds,
-		gameLoop.numCorrect,
+		gameLoop.wordsCaught,
+		gameLoop.difficulty,
 	);
 
 	return (
 		<div className="flex flex-col items-center" style={{ width, height }}>
-			<Stage width={width} height={stageHeight}>
-				<Layer>
-					<Rect
-						x={0}
-						y={0}
-						width={width}
-						height={stageHeight}
-						fill={soundOn ? "#964b00" : "#000000"}
-						listening={false}
-					/>
-					{!gameLoop.gameOver && (
-						<FallingWords words={gameLoop.words} width={width} />
-					)}
-					<Hud
-						numCorrect={gameLoop.numCorrect}
-						numMissed={gameLoop.numMissed}
-						fontSize={settings.hudFontSize}
-					/>
-					<GameOverOverlay
-						gameOver={gameLoop.gameOver}
-						score={gameLoop.numCorrect}
-						width={width}
-						height={stageHeight}
-						fontSize={settings.gameOverFontSize}
-						onReset={handleReset}
-					/>
-				</Layer>
-			</Stage>
+			<TypersHeader
+				points={gameLoop.points}
+				health={gameLoop.health}
+				maxHealth={gameLoop.maxHealth}
+				timeRemainingSeconds={gameLoop.timeRemainingSeconds}
+			/>
+			<div className="border-y border-border">
+				<Stage width={width} height={stageHeight}>
+					<Layer>
+						{soundOn && (
+							<Rect
+								x={0}
+								y={0}
+								width={width}
+								height={stageHeight}
+								fill="#964b00"
+								listening={false}
+							/>
+						)}
+						{!gameLoop.gameOver && (
+							<FallingWords
+								words={gameLoop.words}
+								width={width}
+								color={wordColor}
+							/>
+						)}
+						<GameOverOverlay
+							gameOver={gameLoop.gameOver}
+							score={gameLoop.points}
+							width={width}
+							height={stageHeight}
+							fontSize={settings.gameOverFontSize}
+							color={wordColor}
+							onReset={handleReset}
+						/>
+					</Layer>
+				</Stage>
+			</div>
 			<div
 				className="flex flex-1 items-center justify-center"
 				style={{ height: TYPED_INPUT_BAR_HEIGHT }}

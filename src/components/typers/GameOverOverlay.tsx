@@ -7,6 +7,7 @@ export type TGameOverOverlay = {
 	width: number;
 	height: number;
 	fontSize: number;
+	color: string;
 	onReset: () => void;
 };
 
@@ -16,6 +17,7 @@ export function GameOverOverlay({
 	width,
 	height,
 	fontSize,
+	color,
 	onReset,
 }: TGameOverOverlay) {
 	if (!gameOver) return null;
@@ -35,7 +37,7 @@ export function GameOverOverlay({
 				x={width / 2}
 				y={height / 2}
 				fontSize={fontSize}
-				fill="white"
+				fill={color}
 				width={width}
 				offsetX={width / 2}
 				offsetY={fontSize}
@@ -47,7 +49,7 @@ export function GameOverOverlay({
 				x={width / 2}
 				y={height / 2 + 150}
 				fontSize={resetFontSize}
-				fill="white"
+				fill={color}
 				width={120}
 				offsetX={60}
 				height={30}
