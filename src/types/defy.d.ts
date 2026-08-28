@@ -2,6 +2,7 @@ export type TWordOfDay = {
 	word?: string;
 	wiktionaryUrl?: string;
 	senses: TWordOfDayDefinition[];
+	letterHints?: (string | undefined)[];
 };
 
 export type TWordOfDayDefinition = {

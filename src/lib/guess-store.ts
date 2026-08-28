@@ -1,5 +1,5 @@
-import type { TGuess } from "#/types/defy";
 import { Store } from "@tanstack/store";
+import type { TGuess } from "#/types/defy";
 import { getCurrentFormattedDate } from "./utils";
 
 export type TGuessStore = {
@@ -8,14 +8,16 @@ export type TGuessStore = {
 	gameOver: boolean;
 	gameOverDate?: string;
 	gameWon: boolean;
+	streak: number;
 };
 
-const defaultState = {
+const defaultState: TGuessStore = {
 	guesses: [],
 	hintsUsed: 0,
 	gameOver: false,
 	gameOverDate: undefined,
 	gameWon: false,
+	streak: 0,
 };
 
 export const guessStore = new Store<TGuessStore>(defaultState);
@@ -40,11 +42,12 @@ export const setGameOver = (won: boolean) => {
 		gameOver: true,
 		gameWon: won,
 		gameOverDate: getCurrentFormattedDate(),
+		streak: won ? prev.streak + 1 : 0,
 	}));
 };
 
 export const clearGameState = () => {
-	guessStore.setState(() => defaultState);
+	guessStore.setState((prev) => ({ ...defaultState, streak: prev.streak }));
 };
 
 // Sync changes to localStorage whenever the store updates

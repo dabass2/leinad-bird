@@ -202,6 +202,37 @@ export const getWord = createServerFn({
 			`Number of guess ${numGuesses}. Showing number of hints ${numHintsToShow}`,
 		);
 
+		// Once every definition/synonym has already been revealed, further hints
+		// have nothing left to unlock. Past that point, fall back to revealing
+		// letters of the answer instead — but only in response to an actual
+		// hint-button click, never just from racking up guesses. Guesses alone
+		// can already push numHintsToShow past maxRevealable (e.g. a
+		// low-definition word by guess 4), so letters are driven purely by the
+		// portion of hintsUsed left over after defs/synonyms are exhausted.
+		const maxRevealable = wordOfDay.senses.reduce(
+			(max, sense) =>
+				Math.max(max, sense.definitions.length, sense.synonyms.length),
+			0,
+		);
+		const answer = wordOfDay.word ?? "";
+		const hintsAbsorbedByDefs = Math.max(0, maxRevealable - (numGuesses + 1));
+		const excessHints = Math.max(
+			0,
+			(data.hintsUsed || 0) - hintsAbsorbedByDefs,
+		);
+		const lettersToReveal = Math.min(
+			excessHints,
+			Math.max(answer.length - 1, 0),
+		);
+		const letterHints =
+			lettersToReveal > 0
+				? answer
+						.split("")
+						.map((letter, index) =>
+							index < lettersToReveal ? letter : undefined,
+						)
+				: undefined;
+
 		const defOutlineWithHints: TWordOfDay = {
 			word: undefined,
 			wiktionaryUrl: undefined,
@@ -214,6 +245,7 @@ export const getWord = createServerFn({
 					.filter((syn) => !syn?.includes(wordOfDay.word ?? ""))
 					.map((syn, index) => (index < numHintsToShow ? syn : undefined)),
 			})),
+			letterHints,
 		};
 
 		return defOutlineWithHints;

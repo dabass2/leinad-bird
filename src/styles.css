@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap");
 @import "tailwindcss";
 @plugin '@tailwindcss/typography';
 
@@ -348,4 +348,73 @@ a {
     background-color: var(--background);
     color: var(--foreground);
   }
+}
+
+/* Defy redesign palette — toggled on <body> while the Defy route is mounted so
+   it also reaches portaled dialogs (Radix renders them as siblings under body). */
+.defy-theme {
+  --defy-bg: #fcfae8;
+  --defy-surface: #fffef6;
+  --defy-surface-muted: #f7f3dc;
+  --defy-ink: #171613;
+  --defy-ink-soft: #2b2924;
+  --defy-muted: #6b6659;
+  --defy-line: #e6e0c6;
+  --defy-accent: #d6a16c;
+  --defy-accent-strong: #b4844f;
+  --defy-accent-soft: rgba(214, 161, 108, 0.18);
+  --defy-accent-text: #8e5f26;
+  --defy-correct-bg: #cde8da;
+  --defy-correct-border: #7cc49a;
+  --defy-correct-text: #2f7355;
+  --defy-wrong-bg: #f8cfcf;
+  --defy-wrong-border: rgba(240, 160, 160, 0.85);
+  --defy-wrong-text: #9e5757;
+
+  --background: var(--defy-surface);
+  --foreground: var(--defy-ink);
+  --card: var(--defy-surface);
+  --card-foreground: var(--defy-ink);
+  --popover: var(--defy-surface);
+  --popover-foreground: var(--defy-ink);
+  --primary: var(--defy-ink);
+  --primary-foreground: var(--defy-bg);
+  --secondary: var(--defy-surface-muted);
+  --secondary-foreground: var(--defy-ink);
+  --muted: var(--defy-surface-muted);
+  --muted-foreground: var(--defy-muted);
+  --accent: var(--defy-surface-muted);
+  --accent-foreground: var(--defy-ink);
+  --border: var(--defy-line);
+  --input: var(--defy-line);
+  --ring: var(--defy-accent);
+
+  --sea-ink: var(--defy-ink);
+  --sea-ink-soft: var(--defy-ink-soft);
+  --bg-base: var(--defy-bg);
+  --lagoon-deep: var(--defy-accent);
+  --line: var(--defy-line);
+  --header-bg: rgba(252, 250, 232, 0.9);
+  --chip-bg: var(--defy-surface);
+  --chip-line: var(--defy-line);
+  --guess-wrong: var(--defy-wrong-bg);
+  --guess-close: #e3cf6b;
+  --guess-correct: var(--defy-correct-bg);
+
+  background-color: var(--defy-bg);
+  font-family: "Poppins", var(--font-sans);
+}
+
+.defy-theme code {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.defy-scroll {
+  scrollbar-width: thin;
+}
+
+/* The daily game is meant to fit on one screen; the marketing footer just
+   forces a scrollbar underneath it, so hide it for the duration of the route. */
+.defy-theme footer {
+  display: none;
 }
