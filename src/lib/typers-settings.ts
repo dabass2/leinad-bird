@@ -1,4 +1,5 @@
 import type { TFallingWord, TTypersSettings } from "#/types/typers";
+import { getAsteroidDiameter } from "./typers-visuals";
 
 export const VIEWPORT_BOUNDS = {
 	minWidth: 360,
@@ -112,29 +113,21 @@ export function getNumWordsToSpawn(
 
 export function findSpawnPosition(
 	width: number,
-	wordScreenSize: number,
+	radius: number,
 	minSpacing: number,
 	existingWords: TFallingWord[],
 ): number | null {
-	let pos = Math.floor(Math.random() * width);
-	let validPos = false;
-	let attempts = 0;
+	const minPos = Math.min(radius, width / 2);
+	const maxPos = Math.max(width - radius, width / 2);
 
-	while (!validPos && attempts < SPAWN_POSITION_ATTEMPTS) {
-		if (pos - wordScreenSize < 0) {
-			pos = wordScreenSize * 0.5;
-		} else if (pos + wordScreenSize > width) {
-			pos = width - wordScreenSize * 0.5;
-		}
-
-		validPos = !existingWords.some((w) => {
-			const distance = Math.abs(pos - w.x);
-			const wWordScreenSize = (w.size * w.text.length) / 2;
-			return distance < wordScreenSize + wWordScreenSize + minSpacing;
+	for (let attempts = 0; attempts < SPAWN_POSITION_ATTEMPTS; attempts++) {
+		const pos = minPos + Math.random() * (maxPos - minPos);
+		const overlaps = existingWords.some((w) => {
+			const wRadius = getAsteroidDiameter(w.text, w.size) / 2;
+			return Math.abs(pos - w.x) < radius + wRadius + minSpacing;
 		});
-
-		attempts++;
+		if (!overlaps) return pos;
 	}
 
-	return validPos ? pos : null;
+	return null;
 }

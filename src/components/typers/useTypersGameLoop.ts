@@ -13,7 +13,11 @@ import {
 	type TDifficulty,
 } from "#/lib/typers-settings";
 import { typersSettingsStore } from "#/lib/typers-settings-store";
-import { ASTEROID_PATHS, IMPACT_DURATION_MS } from "#/lib/typers-visuals";
+import {
+	ASTEROID_PATHS,
+	getAsteroidDiameter,
+	IMPACT_DURATION_MS,
+} from "#/lib/typers-visuals";
 import type { TFallingWord, TImpact } from "#/types/typers";
 
 export type TTypersGameLoopParams = {
@@ -144,10 +148,10 @@ export function useTypersGameLoop({
 					exactly: 1,
 					maxLength: settings.maxWordLength,
 				})[0];
-				const wordScreenSize = (settings.wordFontSize * text.length) / 2;
+				const radius = getAsteroidDiameter(text, settings.wordFontSize) / 2;
 				const pos = findSpawnPosition(
 					width,
-					wordScreenSize,
+					radius,
 					settings.minWordSpacing,
 					wordsRef.current,
 				);
@@ -156,7 +160,8 @@ export function useTypersGameLoop({
 						id: `${text}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
 						text,
 						x: pos,
-						y: 0,
+						// start just above the stage so the rock slides in
+						y: -radius,
 						size: settings.wordFontSize,
 						rotation: (Math.random() - 0.5) * 16,
 						variant: Math.floor(Math.random() * ASTEROID_PATHS.length),

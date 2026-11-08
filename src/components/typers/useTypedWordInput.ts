@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export type TTypedWordInputParams = {
 	disabled: boolean;
 	onSubmit: (word: string) => void;
-	onCheatReset: () => void;
 };
 
 export type TTypedWordInput = {
@@ -18,7 +17,6 @@ export type TTypedWordInput = {
 export function useTypedWordInput({
 	disabled,
 	onSubmit,
-	onCheatReset,
 }: TTypedWordInputParams): TTypedWordInput {
 	const [typedWord, setTypedWord] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -30,18 +28,12 @@ export function useTypedWordInput({
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent<HTMLInputElement>) => {
-			if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "f") {
-				e.preventDefault();
-				setTypedWord("");
-				onCheatReset();
-				return;
-			}
 			if (e.key === "Enter") {
 				onSubmit(typedWord);
 				setTypedWord("");
 			}
 		},
-		[typedWord, onSubmit, onCheatReset],
+		[typedWord, onSubmit],
 	);
 
 	useEffect(() => {

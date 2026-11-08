@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Layer, Rect, Stage } from "react-konva";
+import { useCallback, useMemo, useState } from "react";
+import { Layer, Stage } from "react-konva";
 import {
 	getClampedScale,
 	getTypersSettings,
@@ -21,10 +21,6 @@ import { useTypersGameLoop } from "./useTypersGameLoop";
 
 export type TTypersGame = { width: number; height: number };
 
-function playSound(url: string) {
-	new Audio(url).play();
-}
-
 function getCssColor(property: string, fallback: string): string {
 	return (
 		getComputedStyle(document.documentElement)
@@ -34,7 +30,6 @@ function getCssColor(property: string, fallback: string): string {
 }
 
 export function TypersGame({ width, height }: TTypersGame) {
-	const [soundOn, setSoundOn] = useState(false);
 	const [wordColor] = useState(() => getCssColor("--sea-ink", "black"));
 	const wordStrokeColor =
 		wordColor === "black"
@@ -50,40 +45,16 @@ export function TypersGame({ width, height }: TTypersGame) {
 	);
 	const gameLoop = useTypersGameLoop({ width, height: stageHeight, scale });
 
-	const handleSubmit = useCallback(
-		(word: string) => {
-			const matched = gameLoop.submitTypedWord(word);
-			if (matched && soundOn) {
-				const num = Math.ceil(Math.random() * 5);
-				playSound(`https://leinad.dev/bird/correct_${num}.mp3`);
-			}
-		},
-		[gameLoop.submitTypedWord, soundOn],
-	);
-
-	const handleCheatReset = useCallback(() => {
-		setSoundOn(true);
-		gameLoop.reset();
-	}, [gameLoop.reset]);
-
 	const { typedWord, inputRef, clearTypedWord, handleChange, handleKeyDown } =
 		useTypedWordInput({
 			disabled: gameLoop.gameOver,
-			onSubmit: handleSubmit,
-			onCheatReset: handleCheatReset,
+			onSubmit: gameLoop.submitTypedWord,
 		});
 
 	const handleReset = useCallback(() => {
-		setSoundOn(false);
 		clearTypedWord();
 		gameLoop.reset();
 	}, [clearTypedWord, gameLoop.reset]);
-
-	useEffect(() => {
-		if (gameLoop.gameOver && soundOn) {
-			playSound("https://leinad.dev/bird/game_over.mp3");
-		}
-	}, [gameLoop.gameOver, soundOn]);
 
 	const settings = getTypersSettings(
 		scale,
@@ -103,16 +74,6 @@ export function TypersGame({ width, height }: TTypersGame) {
 			<div className="border-y border-border">
 				<Stage width={width} height={stageHeight}>
 					<Layer>
-						{soundOn && (
-							<Rect
-								x={0}
-								y={0}
-								width={width}
-								height={stageHeight}
-								fill="#964b00"
-								listening={false}
-							/>
-						)}
 						<Town
 							health={gameLoop.health}
 							maxHealth={gameLoop.maxHealth}
