@@ -12,3 +12,11 @@ export const wordFrequencies = sqliteTable("word_frequencies", {
 	wordInApi: integer("word_in_api").default(1),
 	timesUsed: integer("times_used").default(0),
 });
+
+// One row per browser canvas. `state` is the JSON-encoded TPaintState
+// (strokes, fills, regions); it's only ever read/written as a whole blob.
+export const paintCanvases = sqliteTable("paint_canvases", {
+	id: text("id").primaryKey(),
+	state: text("state").notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+});
