@@ -31,7 +31,7 @@ COPY --from=builder /app/.output ./.output
 
 # Handle the SQLite DB file permissions
 # We touch it to ensure it exists so we can chown it before the volume mounts.
-RUN touch bird.db && chown -R node:node /app
+RUN touch leinad.db && chown -R node:node /app
 
 USER node
 
