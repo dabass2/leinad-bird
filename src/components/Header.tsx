@@ -33,6 +33,13 @@ export default function Header() {
 					>
 						Typers
 					</Link>
+					<Link
+						to="/paint"
+						className="nav-link"
+						activeProps={{ className: "nav-link is-active" }}
+					>
+						Paint
+					</Link>
 				</div>
 			</nav>
 		</header>

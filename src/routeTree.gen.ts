@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TypersIndexRouteImport } from './routes/typers/index'
+import { Route as PaintIndexRouteImport } from './routes/paint/index'
 import { Route as DefyIndexRouteImport } from './routes/defy/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const TypersIndexRoute = TypersIndexRouteImport.update({
   path: '/typers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaintIndexRoute = PaintIndexRouteImport.update({
+  id: '/paint/',
+  path: '/paint/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DefyIndexRoute = DefyIndexRouteImport.update({
   id: '/defy/',
   path: '/defy/',
@@ -32,30 +38,34 @@ const DefyIndexRoute = DefyIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/defy/': typeof DefyIndexRoute
+  '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/defy': typeof DefyIndexRoute
+  '/paint': typeof PaintIndexRoute
   '/typers': typeof TypersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/defy/': typeof DefyIndexRoute
+  '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/defy/' | '/typers/'
+  fullPaths: '/' | '/defy/' | '/paint/' | '/typers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/defy' | '/typers'
-  id: '__root__' | '/' | '/defy/' | '/typers/'
+  to: '/' | '/defy' | '/paint' | '/typers'
+  id: '__root__' | '/' | '/defy/' | '/paint/' | '/typers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DefyIndexRoute: typeof DefyIndexRoute
+  PaintIndexRoute: typeof PaintIndexRoute
   TypersIndexRoute: typeof TypersIndexRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TypersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paint/': {
+      id: '/paint/'
+      path: '/paint'
+      fullPath: '/paint/'
+      preLoaderRoute: typeof PaintIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/defy/': {
       id: '/defy/'
       path: '/defy'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DefyIndexRoute: DefyIndexRoute,
+  PaintIndexRoute: PaintIndexRoute,
   TypersIndexRoute: TypersIndexRoute,
 }
 export const routeTree = rootRouteImport

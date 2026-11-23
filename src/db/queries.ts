@@ -1,6 +1,6 @@
 import { and, asc, eq, gt, gte, lte, sql } from "drizzle-orm";
 import { db } from ".";
-import { wordFrequencies } from "./schema";
+import { paintCanvases, wordFrequencies } from "./schema";
 
 /**
  * Fetches today's word and updates its usage count.
@@ -59,4 +59,30 @@ export async function updateApiStatus(rank: number, exists: boolean) {
 			wordInApi: exists ? 1 : 0,
 		})
 		.where(eq(wordFrequencies.rank, rank));
+}
+
+/**
+ * Returns the saved JSON state for a paint canvas, or null if none exists.
+ */
+export async function getPaintCanvas(id: string) {
+	const [row] = await db
+		.select({ state: paintCanvases.state })
+		.from(paintCanvases)
+		.where(eq(paintCanvases.id, id))
+		.limit(1);
+	return row?.state ?? null;
+}
+
+/**
+ * Inserts or overwrites the saved JSON state for a paint canvas.
+ */
+export async function upsertPaintCanvas(id: string, state: string) {
+	const updatedAt = new Date();
+	return await db
+		.insert(paintCanvases)
+		.values({ id, state, updatedAt })
+		.onConflictDoUpdate({
+			target: paintCanvases.id,
+			set: { state, updatedAt },
+		});
 }
