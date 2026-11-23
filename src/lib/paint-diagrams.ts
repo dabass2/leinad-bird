@@ -87,12 +87,30 @@ export const gridGenerator: TDiagramGenerator = {
 	},
 };
 
+/** A single region covering the whole canvas, for freehand painting. */
+export const blankGenerator: TDiagramGenerator = {
+	id: "blank",
+	name: "Blank",
+	generate: (width, height) => [
+		{
+			id: `blank-${Date.now()}`,
+			number: 0,
+			labelPosition: { x: width / 2, y: height / 2 },
+			points: [0, 0, width, 0, width, height, 0, height],
+		},
+	],
+};
+
 export const diagramGenerators: TDiagramGenerator[] = [
 	voronoiGenerator,
 	gridGenerator,
+	blankGenerator,
 ];
 
 export const defaultDiagramGenerator = voronoiGenerator;
+
+export const getDiagramGenerator = (id: string | undefined) =>
+	diagramGenerators.find((g) => g.id === id) ?? defaultDiagramGenerator;
 
 export const PAINT_MAX_DIAGRAM_SIZE = { width: 1200, height: 800 } as const;
 export const PAINT_BRUSH_BOUNDS = { min: 5, max: 100, step: 5 } as const;

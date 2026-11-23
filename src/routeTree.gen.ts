@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TypersIndexRouteImport } from './routes/typers/index'
 import { Route as PaintIndexRouteImport } from './routes/paint/index'
 import { Route as DefyIndexRouteImport } from './routes/defy/index'
+import { Route as PaintCanvasIdRouteImport } from './routes/paint/$canvasId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,15 +35,22 @@ const DefyIndexRoute = DefyIndexRouteImport.update({
   path: '/defy/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaintCanvasIdRoute = PaintCanvasIdRouteImport.update({
+  id: '/paint/$canvasId',
+  path: '/paint/$canvasId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy/': typeof DefyIndexRoute
   '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy': typeof DefyIndexRoute
   '/paint': typeof PaintIndexRoute
   '/typers': typeof TypersIndexRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy/': typeof DefyIndexRoute
   '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/defy/' | '/paint/' | '/typers/'
+  fullPaths: '/' | '/paint/$canvasId' | '/defy/' | '/paint/' | '/typers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/defy' | '/paint' | '/typers'
-  id: '__root__' | '/' | '/defy/' | '/paint/' | '/typers/'
+  to: '/' | '/paint/$canvasId' | '/defy' | '/paint' | '/typers'
+  id: '__root__' | '/' | '/paint/$canvasId' | '/defy/' | '/paint/' | '/typers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PaintCanvasIdRoute: typeof PaintCanvasIdRoute
   DefyIndexRoute: typeof DefyIndexRoute
   PaintIndexRoute: typeof PaintIndexRoute
   TypersIndexRoute: typeof TypersIndexRoute
@@ -99,11 +109,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DefyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paint/$canvasId': {
+      id: '/paint/$canvasId'
+      path: '/paint/$canvasId'
+      fullPath: '/paint/$canvasId'
+      preLoaderRoute: typeof PaintCanvasIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PaintCanvasIdRoute: PaintCanvasIdRoute,
   DefyIndexRoute: DefyIndexRoute,
   PaintIndexRoute: PaintIndexRoute,
   TypersIndexRoute: TypersIndexRoute,

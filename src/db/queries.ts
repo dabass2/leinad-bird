@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, gte, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, lte, sql } from "drizzle-orm";
 import { db } from ".";
 import { paintCanvases, wordFrequencies } from "./schema";
 
@@ -85,4 +85,23 @@ export async function upsertPaintCanvas(id: string, state: string) {
 			target: paintCanvases.id,
 			set: { state, updatedAt },
 		});
+}
+
+/**
+ * Returns the saved canvases matching the given ids, most recently updated first.
+ */
+export async function getPaintCanvases(ids: string[]) {
+	if (ids.length === 0) return [];
+	return await db
+		.select()
+		.from(paintCanvases)
+		.where(inArray(paintCanvases.id, ids))
+		.orderBy(desc(paintCanvases.updatedAt));
+}
+
+/**
+ * Deletes a saved paint canvas.
+ */
+export async function deletePaintCanvas(id: string) {
+	return await db.delete(paintCanvases).where(eq(paintCanvases.id, id));
 }
