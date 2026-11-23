@@ -13,7 +13,7 @@ export interface Project {
 
 const REPO_URL = "https://github.com/dabass2/leinad-bird";
 
-// public/ is served under the app's base path (/bird/), so root-relative paths won't resolve.
+// Prefix with BASE_URL so public/ assets still resolve if the app is ever served under a sub-path.
 const homeImage = (name: string) =>
 	`${import.meta.env.BASE_URL}home/${name}.webp`;
 

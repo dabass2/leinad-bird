@@ -7,20 +7,14 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-	base: "/bird/",
 	plugins: [
 		devtools(),
 		nitro({
 			rollupConfig: { external: [/^@sentry\//] },
-			baseURL: "/bird/",
 		}),
 		tsconfigPaths({ projects: ["./tsconfig.json"] }),
 		tailwindcss(),
-		tanstackStart({
-			router: {
-				basepath: "/bird/",
-			},
-		}),
+		tanstackStart(),
 		viteReact({
 			babel: {
 				plugins: ["babel-plugin-react-compiler"],

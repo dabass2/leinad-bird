@@ -4,7 +4,7 @@ import { useStore } from "@tanstack/react-store";
 import confetti from "canvas-confetti";
 import { Flame } from "lucide-react";
 import { useEffect } from "react";
-import { BirdError } from "#/components/BirdError";
+import { LoadError } from "#/components/LoadError";
 import { Instructions } from "#/components/defy/Instructions";
 import { WordDef } from "#/components/defy/WordDef";
 import { WordGuesses } from "#/components/defy/WordGuesses";
@@ -101,7 +101,7 @@ function Defy() {
 	}
 
 	if (isError || !wordDef) {
-		return <BirdError />;
+		return <LoadError />;
 	}
 
 	const dateLabel = formatUtcDate(
