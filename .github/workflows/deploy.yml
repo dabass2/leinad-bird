@@ -13,22 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Build app
-        run: |
-          npm ci
-          npm run build
-
-      - name: Set short git commit SHA
-        id: vars
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
-
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -42,3 +26,21 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/dabass2/leinad-bird:latest
+
+      - name: Deploy to VPS
+        env:
+          IMAGE: ghcr.io/dabass2/leinad-bird
+          WATCHTOWER_TOKEN: ${{ secrets.WATCHTOWER_TOKEN }}
+        run: |
+          # Watchtower pulls the image and recreates the container, then reports back.
+          resp=$(curl --fail-with-body --silent --show-error --max-time 300 -X POST \
+            -H "Authorization: Bearer $WATCHTOWER_TOKEN" \
+            "https://leinad.dev/deploy/v1/update?image=$IMAGE")
+          echo "$resp" | jq .
+          if [ "$(echo "$resp" | jq '.summary.failed > 0 or .summary.scan_failed == true')" = true ]; then
+            echo "::error::Watchtower could not update $IMAGE; see: docker compose logs watchtower"
+            exit 1
+          fi
+          if [ "$(echo "$resp" | jq '.summary.updated')" = 0 ]; then
+            echo "::warning::No container was updated (image unchanged, or no running container uses $IMAGE)"
+          fi
