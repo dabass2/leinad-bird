@@ -1,4 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import {
+	ArrowLeft,
 	Eraser,
 	Hand,
 	Lock,
@@ -14,8 +16,8 @@ import {
 import { Button } from "#/components/ui/button";
 import { Separator } from "#/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "#/components/ui/toggle-group";
-import { diagramGenerators, PAINT_BRUSH_BOUNDS } from "#/lib/paint-diagrams";
-import type { TDiagramGenerator, TPaintTool } from "#/types/paint";
+import { PAINT_BRUSH_BOUNDS } from "#/lib/paint-diagrams";
+import type { TPaintTool } from "#/types/paint";
 
 const TOOLS: {
 	id: TPaintTool;
@@ -39,7 +41,6 @@ export type TPaintToolbar = {
 	onBrushSizeChange: (size: number) => void;
 	paintInLines: boolean;
 	onPaintInLinesChange: (value: boolean) => void;
-	onNewDiagram: (generator: TDiagramGenerator) => void;
 	onClear: () => void;
 	onSave: () => void;
 	saveStatus: "idle" | "saving" | "saved" | "error";
@@ -54,7 +55,6 @@ export function PaintToolbar({
 	onBrushSizeChange,
 	paintInLines,
 	onPaintInLinesChange,
-	onNewDiagram,
 	onClear,
 	onSave,
 	saveStatus,
@@ -63,6 +63,15 @@ export function PaintToolbar({
 
 	return (
 		<div className="flex w-full flex-wrap items-center justify-center gap-3 border-b border-[--line] px-3 py-2 text-sm font-semibold">
+			<Button asChild size="sm" variant="ghost">
+				<Link to="/paint">
+					<ArrowLeft />
+					Canvases
+				</Link>
+			</Button>
+
+			<Separator orientation="vertical" className="h-6!" />
+
 			<ToggleGroup
 				type="single"
 				variant="outline"
@@ -119,19 +128,6 @@ export function PaintToolbar({
 				{paintInLines ? <Lock /> : <Unlock />}
 				In lines
 			</Button>
-
-			<Separator orientation="vertical" className="h-6!" />
-
-			{diagramGenerators.map((generator) => (
-				<Button
-					key={generator.id}
-					size="sm"
-					variant="outline"
-					onClick={() => onNewDiagram(generator)}
-				>
-					New {generator.name}
-				</Button>
-			))}
 
 			<Separator orientation="vertical" className="h-6!" />
 

@@ -1,8 +1,11 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "#/components/ui/button";
 import {
-	defaultDiagramGenerator,
+	getDiagramGenerator,
 	PAINT_MAX_DIAGRAM_SIZE,
 } from "#/lib/paint-diagrams";
+import { rememberCanvasId } from "#/lib/paint-storage";
 import { getPaintState, savePaintState } from "#/routes/paint/-paint.functions";
 import type {
 	TDiagramGenerator,
@@ -13,7 +16,6 @@ import type {
 import { PaintCanvas } from "./PaintCanvas";
 import { PaintToolbar, type TPaintToolbar } from "./PaintToolbar";
 
-const CANVAS_ID_KEY = "paint-canvas-id";
 const PAN_HOLD_KEYS = new Set(["Alt", "Meta", " "]);
 const TOOL_SHORTCUTS: Record<string, TPaintTool> = {
 	p: "draw",
@@ -30,16 +32,6 @@ declare global {
 	}
 }
 
-/** Stable per-browser id so each visitor gets their own saved canvas. */
-function getCanvasId() {
-	let id = localStorage.getItem(CANVAS_ID_KEY);
-	if (!id) {
-		id = crypto.randomUUID();
-		localStorage.setItem(CANVAS_ID_KEY, id);
-	}
-	return id;
-}
-
 function generateDiagram(
 	generator: TDiagramGenerator,
 	width: number,
@@ -51,13 +43,24 @@ function generateDiagram(
 	);
 }
 
-export type TPaintWorkspace = { width: number; height: number };
+export type TPaintWorkspace = {
+	canvasId: string;
+	/** Diagram to generate if this canvas hasn't been saved yet */
+	template?: string;
+	width: number;
+	height: number;
+};
 
-export function PaintWorkspace({ width, height }: TPaintWorkspace) {
-	const [canvasId] = useState(getCanvasId);
-	const [regions, setRegions] = useState<TRegion[]>(() =>
-		generateDiagram(defaultDiagramGenerator, width, height),
+export function PaintWorkspace({
+	canvasId,
+	template,
+	width,
+	height,
+}: TPaintWorkspace) {
+	const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
+		"loading",
 	);
+	const [regions, setRegions] = useState<TRegion[]>([]);
 	const [strokes, setStrokes] = useState<TStroke[]>([]);
 	const [fills, setFills] = useState<Record<string, string>>({});
 	const [activeTool, setActiveTool] = useState<TPaintTool>("draw");
@@ -82,17 +85,38 @@ export function PaintWorkspace({ width, height }: TPaintWorkspace) {
 		return () => observer.disconnect();
 	}, []);
 
-	// Restore this browser's saved canvas, if any
+	// Restore the saved canvas, or start a fresh one from the template.
+	// Size is read once here so a later resize doesn't regenerate the diagram.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: load once per canvas
 	useEffect(() => {
 		let cancelled = false;
+		setLoadStatus("loading");
 		getPaintState({ data: { canvasId } })
 			.then((saved) => {
-				if (cancelled || !saved) return;
-				setRegions(saved.regions);
-				setStrokes(saved.strokes);
-				setFills(saved.fills);
+				if (cancelled) return;
+				if (saved) {
+					rememberCanvasId(canvasId);
+					setRegions(saved.regions);
+					setStrokes(saved.strokes);
+					setFills(saved.fills);
+				} else {
+					const toolbar = toolbarRef.current?.offsetHeight ?? 0;
+					setRegions(
+						generateDiagram(
+							getDiagramGenerator(template),
+							width,
+							height - toolbar,
+						),
+					);
+					setStrokes([]);
+					setFills({});
+				}
+				setLoadStatus("ready");
 			})
-			.catch((err) => console.error("Failed to load paint state", err));
+			.catch((err) => {
+				console.error("Failed to load paint state", err);
+				if (!cancelled) setLoadStatus("error");
+			});
 		return () => {
 			cancelled = true;
 		};
@@ -128,9 +152,12 @@ export function PaintWorkspace({ width, height }: TPaintWorkspace) {
 					TEXT_INPUT_TYPES.has(target.type)));
 
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.repeat || isTyping(e)) return;
+			if (isTyping(e)) return;
+			// Every Space keydown, including auto-repeats while held, would
+			// otherwise scroll the page
+			if (e.key === " ") e.preventDefault();
+			if (e.repeat) return;
 			if (PAN_HOLD_KEYS.has(e.key)) {
-				if (e.key === " ") e.preventDefault(); // don't scroll the page
 				if (activeTool !== "pan") {
 					previousToolRef.current = activeTool;
 					setActiveTool("pan");
@@ -173,18 +200,13 @@ export function PaintWorkspace({ width, height }: TPaintWorkspace) {
 		previousToolRef.current = null;
 	};
 
-	const handleNewDiagram = (generator: TDiagramGenerator) => {
-		setRegions(generateDiagram(generator, width, height - toolbarHeight));
-		setStrokes([]);
-		setFills({});
-	};
-
 	const handleSave = async () => {
 		setSaveStatus("saving");
 		try {
 			await savePaintState({
 				data: { canvasId, state: { strokes, fills, regions } },
 			});
+			rememberCanvasId(canvasId);
 			setSaveStatus("saved");
 		} catch (err) {
 			console.error("Failed to save paint state", err);
@@ -204,7 +226,6 @@ export function PaintWorkspace({ width, height }: TPaintWorkspace) {
 					onBrushSizeChange={setBrushSize}
 					paintInLines={paintInLines}
 					onPaintInLinesChange={setPaintInLines}
-					onNewDiagram={handleNewDiagram}
 					onClear={() => {
 						setStrokes([]);
 						setFills({});
@@ -214,20 +235,29 @@ export function PaintWorkspace({ width, height }: TPaintWorkspace) {
 				/>
 			</div>
 			<div className="flex-1 overflow-hidden">
-				<PaintCanvas
-					width={width}
-					height={Math.max(0, height - toolbarHeight)}
-					regions={regions}
-					strokes={strokes}
-					fills={fills}
-					activeTool={activeTool}
-					selectedColor={selectedColor}
-					brushSize={brushSize}
-					paintInLines={paintInLines}
-					onStrokesChange={setStrokes}
-					onFill={handleFill}
-					onColorPicked={handleColorPicked}
-				/>
+				{loadStatus === "error" ? (
+					<div className="flex h-full flex-col items-center justify-center gap-3 text-sm">
+						<p className="m-0">Couldn't load this canvas.</p>
+						<Button asChild size="sm" variant="outline">
+							<Link to="/paint">Back to canvases</Link>
+						</Button>
+					</div>
+				) : loadStatus === "ready" ? (
+					<PaintCanvas
+						width={width}
+						height={Math.max(0, height - toolbarHeight)}
+						regions={regions}
+						strokes={strokes}
+						fills={fills}
+						activeTool={activeTool}
+						selectedColor={selectedColor}
+						brushSize={brushSize}
+						paintInLines={paintInLines}
+						onStrokesChange={setStrokes}
+						onFill={handleFill}
+						onColorPicked={handleColorPicked}
+					/>
+				) : null}
 			</div>
 		</div>
 	);

@@ -22,6 +22,13 @@ export type TPaintState = {
 	regions: TRegion[];
 };
 
+export type TSavedCanvas = {
+	id: string;
+	state: TPaintState;
+	/** epoch ms */
+	updatedAt: number;
+};
+
 export type TDiagramGenerator = {
 	id: string;
 	name: string;
