@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TypersIndexRouteImport } from './routes/typers/index'
 import { Route as PaintIndexRouteImport } from './routes/paint/index'
+import { Route as GamesIndexRouteImport } from './routes/games/index'
 import { Route as DefyIndexRouteImport } from './routes/defy/index'
 import { Route as PaintCanvasIdRouteImport } from './routes/paint/$canvasId'
+import { Route as GamesTicTacToeRouteImport } from './routes/games/tic-tac-toe'
+import { Route as GamesMathFrenzyRouteImport } from './routes/games/math-frenzy'
+import { Route as GamesDotsAndBoxesRouteImport } from './routes/games/dots-and-boxes'
+import { Route as GamesConnectFourRouteImport } from './routes/games/connect-four'
+import { Route as GamesConcentrationRouteImport } from './routes/games/concentration'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +36,11 @@ const PaintIndexRoute = PaintIndexRouteImport.update({
   path: '/paint/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesIndexRoute = GamesIndexRouteImport.update({
+  id: '/games/',
+  path: '/games/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DefyIndexRoute = DefyIndexRouteImport.update({
   id: '/defy/',
   path: '/defy/',
@@ -40,41 +51,124 @@ const PaintCanvasIdRoute = PaintCanvasIdRouteImport.update({
   path: '/paint/$canvasId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesTicTacToeRoute = GamesTicTacToeRouteImport.update({
+  id: '/games/tic-tac-toe',
+  path: '/games/tic-tac-toe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesMathFrenzyRoute = GamesMathFrenzyRouteImport.update({
+  id: '/games/math-frenzy',
+  path: '/games/math-frenzy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesDotsAndBoxesRoute = GamesDotsAndBoxesRouteImport.update({
+  id: '/games/dots-and-boxes',
+  path: '/games/dots-and-boxes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesConnectFourRoute = GamesConnectFourRouteImport.update({
+  id: '/games/connect-four',
+  path: '/games/connect-four',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesConcentrationRoute = GamesConcentrationRouteImport.update({
+  id: '/games/concentration',
+  path: '/games/concentration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/games/concentration': typeof GamesConcentrationRoute
+  '/games/connect-four': typeof GamesConnectFourRoute
+  '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/math-frenzy': typeof GamesMathFrenzyRoute
+  '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy/': typeof DefyIndexRoute
+  '/games/': typeof GamesIndexRoute
   '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/games/concentration': typeof GamesConcentrationRoute
+  '/games/connect-four': typeof GamesConnectFourRoute
+  '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/math-frenzy': typeof GamesMathFrenzyRoute
+  '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy': typeof DefyIndexRoute
+  '/games': typeof GamesIndexRoute
   '/paint': typeof PaintIndexRoute
   '/typers': typeof TypersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/games/concentration': typeof GamesConcentrationRoute
+  '/games/connect-four': typeof GamesConnectFourRoute
+  '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/math-frenzy': typeof GamesMathFrenzyRoute
+  '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
   '/defy/': typeof DefyIndexRoute
+  '/games/': typeof GamesIndexRoute
   '/paint/': typeof PaintIndexRoute
   '/typers/': typeof TypersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/paint/$canvasId' | '/defy/' | '/paint/' | '/typers/'
+  fullPaths:
+    | '/'
+    | '/games/concentration'
+    | '/games/connect-four'
+    | '/games/dots-and-boxes'
+    | '/games/math-frenzy'
+    | '/games/tic-tac-toe'
+    | '/paint/$canvasId'
+    | '/defy/'
+    | '/games/'
+    | '/paint/'
+    | '/typers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/paint/$canvasId' | '/defy' | '/paint' | '/typers'
-  id: '__root__' | '/' | '/paint/$canvasId' | '/defy/' | '/paint/' | '/typers/'
+  to:
+    | '/'
+    | '/games/concentration'
+    | '/games/connect-four'
+    | '/games/dots-and-boxes'
+    | '/games/math-frenzy'
+    | '/games/tic-tac-toe'
+    | '/paint/$canvasId'
+    | '/defy'
+    | '/games'
+    | '/paint'
+    | '/typers'
+  id:
+    | '__root__'
+    | '/'
+    | '/games/concentration'
+    | '/games/connect-four'
+    | '/games/dots-and-boxes'
+    | '/games/math-frenzy'
+    | '/games/tic-tac-toe'
+    | '/paint/$canvasId'
+    | '/defy/'
+    | '/games/'
+    | '/paint/'
+    | '/typers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GamesConcentrationRoute: typeof GamesConcentrationRoute
+  GamesConnectFourRoute: typeof GamesConnectFourRoute
+  GamesDotsAndBoxesRoute: typeof GamesDotsAndBoxesRoute
+  GamesMathFrenzyRoute: typeof GamesMathFrenzyRoute
+  GamesTicTacToeRoute: typeof GamesTicTacToeRoute
   PaintCanvasIdRoute: typeof PaintCanvasIdRoute
   DefyIndexRoute: typeof DefyIndexRoute
+  GamesIndexRoute: typeof GamesIndexRoute
   PaintIndexRoute: typeof PaintIndexRoute
   TypersIndexRoute: typeof TypersIndexRoute
 }
@@ -102,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaintIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/': {
+      id: '/games/'
+      path: '/games'
+      fullPath: '/games/'
+      preLoaderRoute: typeof GamesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/defy/': {
       id: '/defy/'
       path: '/defy'
@@ -116,13 +217,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaintCanvasIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/tic-tac-toe': {
+      id: '/games/tic-tac-toe'
+      path: '/games/tic-tac-toe'
+      fullPath: '/games/tic-tac-toe'
+      preLoaderRoute: typeof GamesTicTacToeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games/math-frenzy': {
+      id: '/games/math-frenzy'
+      path: '/games/math-frenzy'
+      fullPath: '/games/math-frenzy'
+      preLoaderRoute: typeof GamesMathFrenzyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games/dots-and-boxes': {
+      id: '/games/dots-and-boxes'
+      path: '/games/dots-and-boxes'
+      fullPath: '/games/dots-and-boxes'
+      preLoaderRoute: typeof GamesDotsAndBoxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games/connect-four': {
+      id: '/games/connect-four'
+      path: '/games/connect-four'
+      fullPath: '/games/connect-four'
+      preLoaderRoute: typeof GamesConnectFourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games/concentration': {
+      id: '/games/concentration'
+      path: '/games/concentration'
+      fullPath: '/games/concentration'
+      preLoaderRoute: typeof GamesConcentrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GamesConcentrationRoute: GamesConcentrationRoute,
+  GamesConnectFourRoute: GamesConnectFourRoute,
+  GamesDotsAndBoxesRoute: GamesDotsAndBoxesRoute,
+  GamesMathFrenzyRoute: GamesMathFrenzyRoute,
+  GamesTicTacToeRoute: GamesTicTacToeRoute,
   PaintCanvasIdRoute: PaintCanvasIdRoute,
   DefyIndexRoute: DefyIndexRoute,
+  GamesIndexRoute: GamesIndexRoute,
   PaintIndexRoute: PaintIndexRoute,
   TypersIndexRoute: TypersIndexRoute,
 }

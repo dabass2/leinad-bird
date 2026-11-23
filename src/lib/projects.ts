@@ -55,6 +55,14 @@ export const PROJECTS: Project[] = [
 		wide: true,
 	},
 	{
+		title: "Games",
+		description:
+			"Tic-tac-toe, Connect Four, Dots and Boxes, Concentration and a 60-second math frenzy, all on one small shared engine.",
+		tech: ["React", "TanStack", "Tailwind"],
+		siteUrl: "/games",
+		sourceUrl: REPO_URL,
+	},
+	{
 		title: "Solar System Simulation",
 		description:
 			"A roughly-to-scale solar system rendered in WebGL with p5.js, built from the Solar System OpenData API. Toggle orbits, filter planets, and change the speed.",

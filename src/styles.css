@@ -29,6 +29,10 @@
   --guess-wrong: rgba(243, 132, 132, 0.8);
   --guess-close: rgb(197, 184, 40);
   --guess-correct: rgba(103, 185, 139, 0.9);
+  --game-p1: #d4a373;
+  --game-p2: #6b8f5e;
+  --game-surface: #fffdf4;
+  --game-line: rgba(32, 32, 29, 0.14);
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
