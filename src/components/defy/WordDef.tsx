@@ -52,7 +52,7 @@ export function WordDef({ wordDef }: WordDefProps) {
 	let definitionCounter = 0;
 
 	return (
-		<section className="flex flex-col overflow-hidden rounded-2xl border border-(--defy-line) bg-(--defy-surface) shadow-[0_1px_0_rgba(23,22,19,.04),0_12px_32px_-18px_rgba(23,22,19,.28)] lg:h-full">
+		<section className="flex flex-col overflow-hidden rounded-2xl border border-(--defy-line) bg-(--defy-surface) shadow-(--defy-card-shadow) lg:h-full">
 			<div className="flex flex-wrap items-center gap-3 border-b border-(--defy-line) p-4.5">
 				<code
 					className={`text-[26px]! font-bold tracking-[0.02em] ${!wordDef.word ? "rise-in blur-sm select-none" : ""}`}
@@ -103,7 +103,7 @@ export function WordDef({ wordDef }: WordDefProps) {
 								"noreferrer noopener",
 							);
 						}}
-						className="size-9.5 rounded-[11px] bg-(--defy-accent) text-white hover:bg-[#C68F58]"
+						className="size-9.5 rounded-[11px] bg-(--defy-accent) text-(--defy-on-accent) hover:bg-(--defy-accent-hover)"
 					>
 						<ExternalLink className="size-4" />
 					</Button>

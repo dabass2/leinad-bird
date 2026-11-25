@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Layer, Stage } from "react-konva";
+import { useTheme } from "#/hooks/useTheme";
 import {
 	getClampedScale,
 	getTypersSettings,
@@ -7,8 +8,9 @@ import {
 	TYPERS_HEADER_HEIGHT,
 } from "#/lib/typers-settings";
 import {
-	ASTEROID_TEXT_STROKE_DARK,
+	ASTEROID_TEXT_COLOR,
 	ASTEROID_TEXT_STROKE_LIGHT,
+	GAME_OVER_TEXT_COLORS,
 } from "#/lib/typers-visuals";
 import { FallingWords } from "./FallingWords";
 import { GameOverOverlay } from "./GameOverOverlay";
@@ -21,20 +23,10 @@ import { useTypersGameLoop } from "./useTypersGameLoop";
 
 export type TTypersGame = { width: number; height: number };
 
-function getCssColor(property: string, fallback: string): string {
-	return (
-		getComputedStyle(document.documentElement)
-			.getPropertyValue(property)
-			.trim() || fallback
-	);
-}
-
 export function TypersGame({ width, height }: TTypersGame) {
-	const [wordColor] = useState(() => getCssColor("--sea-ink", "black"));
-	const wordStrokeColor =
-		wordColor === "black"
-			? ASTEROID_TEXT_STROKE_LIGHT
-			: ASTEROID_TEXT_STROKE_DARK;
+	// Konva draws to canvas, so CSS variables can't reach it; pick per theme.
+	const { theme } = useTheme();
+	const gameOverColor = GAME_OVER_TEXT_COLORS[theme];
 	const stageHeight = Math.max(
 		height - TYPED_INPUT_BAR_HEIGHT - TYPERS_HEADER_HEIGHT,
 		0,
@@ -84,8 +76,8 @@ export function TypersGame({ width, height }: TTypersGame) {
 							<FallingWords
 								words={gameLoop.words}
 								width={width}
-								color={wordColor}
-								strokeColor={wordStrokeColor}
+								color={ASTEROID_TEXT_COLOR}
+								strokeColor={ASTEROID_TEXT_STROKE_LIGHT}
 							/>
 						)}
 						<Impacts impacts={gameLoop.impacts} />
@@ -95,7 +87,7 @@ export function TypersGame({ width, height }: TTypersGame) {
 							width={width}
 							height={stageHeight}
 							fontSize={settings.gameOverFontSize}
-							color={wordColor}
+							color={gameOverColor}
 							onReset={handleReset}
 						/>
 					</Layer>

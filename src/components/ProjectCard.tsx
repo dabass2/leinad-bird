@@ -70,10 +70,10 @@ export default function ProjectCard({
 		"inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold no-underline [text-shadow:none] transition hover:-translate-y-px";
 	const solidPill = onImage
 		? "bg-white text-black! shadow-md hover:bg-white/90"
-		: "bg-(--sea-ink-soft) text-white! hover:bg-black";
+		: "bg-(--tile-solid-bg) text-(--tile-solid-ink)! hover:bg-(--tile-solid-hover)";
 	const outlinePill = onImage
 		? "border border-white/70 bg-black/50 text-white! hover:bg-black/70"
-		: "border border-black/30 text-(--sea-ink)! hover:bg-black/5";
+		: "border border-(--tile-outline-line) text-(--sea-ink)! hover:bg-(--tile-outline-hover)";
 
 	return (
 		<article
@@ -124,7 +124,7 @@ export default function ProjectCard({
 								"inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.7rem] font-semibold",
 								onImage
 									? "border-white/40 bg-black/50"
-									: "border-black/15 bg-white/40",
+									: "border-(--tile-chip-line) bg-(--tile-chip-bg)",
 							)}
 						>
 							<TechIcon tech={t} />

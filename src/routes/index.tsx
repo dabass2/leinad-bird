@@ -7,10 +7,10 @@ import { PROJECTS } from "#/lib/projects";
 export const Route = createFileRoute("/")({ component: App });
 
 const CARD_COLORS = [
-	"var(--primary)",
-	"var(--palm)",
-	"var(--lagoon)",
-	"var(--foam)",
+	"var(--tile-1)",
+	"var(--tile-2)",
+	"var(--tile-3)",
+	"var(--tile-4)",
 ];
 
 const NAMES = ["Leinad", "Daniel"];
@@ -61,14 +61,14 @@ function App() {
 
 	return (
 		<main className="page-wrap px-4 pb-8 pt-8">
-			<section className="rise-in relative flex min-h-72 flex-col justify-between overflow-hidden rounded-3xl bg-(--sea-ink-soft) px-6 py-6 text-(--lagoon) sm:min-h-96 sm:px-10 sm:py-8">
+			<section className="rise-in relative flex min-h-72 flex-col justify-between overflow-hidden rounded-3xl bg-(--hero-shade) px-6 py-6 text-(--hero-text) sm:min-h-96 sm:px-10 sm:py-8">
 				<img
 					src={`${import.meta.env.BASE_URL}home/home.webp`}
 					alt=""
 					decoding="async"
 					className="absolute inset-0 h-full w-full object-cover"
 				/>
-				<div className="absolute inset-0 bg-linear-to-t from-(--sea-ink-soft) via-(--sea-ink-soft)/40 to-transparent" />
+				<div className="absolute inset-0 bg-linear-to-t from-(--hero-shade) via-(--hero-shade)/40 to-transparent" />
 
 				<div className="relative flex justify-end gap-2">
 					{SOCIALS.map(({ label, href, icon }) => (
@@ -76,7 +76,7 @@ function App() {
 							key={label}
 							type="button"
 							onClick={() => window.open(href, "_blank", "noopener,noreferrer")}
-							className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-(--lagoon) bg-(--lagoon) px-4 py-2 text-sm font-bold text-black hover:brightness-110"
+							className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-(--hero-text) bg-(--hero-text) px-4 py-2 text-sm font-bold text-(--hero-shade) hover:brightness-110"
 						>
 							<img
 								src={`${import.meta.env.BASE_URL}brand-icons/${icon}.svg`}
@@ -90,7 +90,7 @@ function App() {
 
 				<div className="relative mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 					<NameSwap />
-					<p className="m-0 max-w-64 text-sm font-medium text-(--lagoon)/85">
+					<p className="m-0 max-w-64 text-sm font-medium text-(--hero-text)/85">
 						Software engineer in Chicago, building whatever comes to mind.
 					</p>
 				</div>

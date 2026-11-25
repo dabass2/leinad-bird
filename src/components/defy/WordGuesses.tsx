@@ -61,7 +61,7 @@ ${window.location.href}`);
 	const slots = Array.from({ length: MAX_GUESSES }, (_, i) => guesses[i]);
 
 	return (
-		<section className="rounded-2xl border border-(--defy-line) bg-(--defy-surface) shadow-[0_1px_0_rgba(23,22,19,.04),0_12px_32px_-18px_rgba(23,22,19,.28)]">
+		<section className="rounded-2xl border border-(--defy-line) bg-(--defy-surface) shadow-(--defy-card-shadow)">
 			<div className="flex items-center justify-between gap-3 border-b border-(--defy-line) px-4.5 py-4">
 				<span className="text-xs font-semibold tracking-widest text-(--defy-muted) uppercase">
 					Guesses
@@ -128,13 +128,13 @@ ${window.location.href}`);
 					/>
 					<Button
 						disabled={isSubmitting}
-						className="h-auto self-start rounded-xl bg-(--defy-ink) px-5 py-3.5 font-semibold text-(--defy-bg) hover:bg-[#2C2A24]"
+						className="h-auto self-start rounded-xl bg-(--defy-ink) px-5 py-3.5 font-semibold text-(--defy-bg) hover:bg-(--defy-ink-hover)"
 					>
 						Guess
 					</Button>
 				</form>
 			) : (
-				<div className="flex items-center gap-3 border-t border-(--defy-line) bg-[rgba(124,196,154,.1)] p-4">
+				<div className="flex items-center gap-3 border-t border-(--defy-line) bg-(--defy-win-bg) p-4">
 					<div className="flex-1">
 						<b className="text-sm text-(--defy-ink)">
 							{gameWon ? `Solved in ${guesses.length}` : "Out of guesses"}

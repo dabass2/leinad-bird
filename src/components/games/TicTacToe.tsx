@@ -52,7 +52,7 @@ export function TicTacToe() {
 						disabled={cell !== null || winner !== null || computerThinking}
 						onClick={() => dispatch(i)}
 						className={cn(
-							"flex aspect-square cursor-pointer items-center justify-center rounded-xl border border-(--game-line) bg-(--game-surface) transition enabled:hover:bg-white disabled:cursor-default",
+							"flex aspect-square cursor-pointer items-center justify-center rounded-xl border border-(--game-line) bg-(--game-surface) transition enabled:hover:bg-(--game-input) disabled:cursor-default",
 							line?.includes(i) && "bg-(--foam)",
 						)}
 					>

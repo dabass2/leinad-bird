@@ -62,7 +62,7 @@ export function Concentration() {
 								"flex aspect-square cursor-pointer items-center justify-center rounded-xl border transition-all duration-200",
 								visible
 									? "border-(--game-line) bg-(--game-surface)"
-									: "border-transparent bg-(--sea-ink-soft) hover:-translate-y-0.5",
+									: "border-transparent bg-(--game-board) hover:-translate-y-0.5",
 								card.matched && "cursor-default bg-(--foam) opacity-70",
 							)}
 						>

@@ -54,7 +54,7 @@ export function ConnectFour() {
 			controls={<VersusControls {...versus} />}
 		>
 			<div
-				className="grid w-full max-w-lg gap-1.5 rounded-2xl bg-(--sea-ink-soft) p-2 sm:gap-2 sm:p-3"
+				className="grid w-full max-w-lg gap-1.5 rounded-2xl bg-(--game-board) p-2 sm:gap-2 sm:p-3"
 				style={{ gridTemplateColumns: `repeat(${CONNECT_FOUR_COLS}, 1fr)` }}
 			>
 				{Array.from({ length: CONNECT_FOUR_COLS }, (_, col) => (
@@ -78,15 +78,16 @@ export function ConnectFour() {
 									key={row}
 									className={cn(
 										"aspect-square w-full rounded-full transition-colors",
-										isWinningCell(row, col) && "ring-4 ring-white ring-inset",
+										isWinningCell(row, col) &&
+											"ring-4 ring-(--game-win) ring-inset",
 									)}
 									style={{
 										background:
 											cell !== null
 												? discColor(cell)
 												: isPreview
-													? `color-mix(in srgb, ${discColor(state.turn)} 40%, var(--lagoon))`
-													: "var(--lagoon)",
+													? `color-mix(in srgb, ${discColor(state.turn)} 40%, var(--game-hole))`
+													: "var(--game-hole)",
 									}}
 								/>
 							);
