@@ -3,6 +3,7 @@ import { concentration } from "./concentration";
 import { connectFour } from "./connect-four";
 import { dotsAndBoxes, horizontalLine, verticalLine } from "./dots-and-boxes";
 import { chooseMove, createRng, type Game, type TwoPlayerGame } from "./engine";
+import { mancala, pitOf, storeOf } from "./mancala";
 import { MATH_FRENZY_MS, makeProblem, mathFrenzy } from "./math-frenzy";
 import { ticTacToe } from "./tic-tac-toe";
 
@@ -112,6 +113,55 @@ describe("dots and boxes", () => {
 		const end = selfPlay(dotsAndBoxes, 2);
 		expect(end.scores[0] + end.scores[1]).toBe(end.boxes.length);
 		expect(end.boxes.every((owner) => owner !== null)).toBe(true);
+	});
+});
+
+describe("mancala", () => {
+	it("sows counter-clockwise and gives another turn for landing in the store", () => {
+		// Pit 3 holds 4 seeds: they land in pits 4 and 5, the store, then pit 7.
+		let state = play(mancala, [pitOf(0, 3)]);
+		expect(state.turn).toBe(1);
+		expect(state.board.slice(0, 8)).toEqual([4, 4, 4, 0, 5, 5, 1, 5]);
+		// Pit 2 holds 4 seeds and ends exactly in the store.
+		state = play(mancala, [pitOf(0, 2)]);
+		expect(state.board[storeOf(0)]).toBe(1);
+		expect(state.turn).toBe(0);
+		expect(state.last?.extraTurn).toBe(true);
+	});
+
+	it("skips the opponent's store", () => {
+		const start = mancala.setup(1);
+		start.board[pitOf(0, 5)] = 10;
+		const state = mancala.apply(start, pitOf(0, 5));
+		expect(state.board[storeOf(1)]).toBe(0);
+		expect(state.board[pitOf(0, 0)]).toBe(5);
+		expect(state.last?.sown).not.toContain(storeOf(1));
+	});
+
+	it("captures the facing pit when landing in an empty pit of your own", () => {
+		const start = mancala.setup(1);
+		start.board[pitOf(0, 0)] = 1;
+		start.board[pitOf(0, 1)] = 0;
+		const state = mancala.apply(start, pitOf(0, 0));
+		// Pit 1 faces player 2's pit 4 (index 11), which holds 4.
+		expect(state.board[pitOf(0, 1)]).toBe(0);
+		expect(state.board[11]).toBe(0);
+		expect(state.board[storeOf(0)]).toBe(5);
+		expect(state.last?.captured).toBe(5);
+	});
+
+	it("rejects moves from the wrong side or an empty pit", () => {
+		const start = mancala.setup(1);
+		expect(mancala.apply(start, pitOf(1, 0))).toBe(start);
+		expect(mancala.apply(start, storeOf(0))).toBe(start);
+		const after = play(mancala, [pitOf(0, 3), pitOf(1, 0), pitOf(0, 0)]);
+		expect(mancala.apply(after, pitOf(1, 0))).toBe(after);
+	});
+
+	it("computer plays a whole game and every seed ends in a store", () => {
+		const end = selfPlay(mancala, 4);
+		expect(end.board[storeOf(0)] + end.board[storeOf(1)]).toBe(48);
+		expect(mancala.winner(end)).not.toBeNull();
 	});
 });
 
