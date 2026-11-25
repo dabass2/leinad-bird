@@ -3,7 +3,7 @@ import { concentration } from "./concentration";
 import { connectFour } from "./connect-four";
 import { dotsAndBoxes, horizontalLine, verticalLine } from "./dots-and-boxes";
 import { chooseMove, createRng, type Game, type TwoPlayerGame } from "./engine";
-import { mancala, pitOf, storeOf } from "./mancala";
+import { mancala, pitOf, sowFrames, storeOf } from "./mancala";
 import { MATH_FRENZY_MS, makeProblem, mathFrenzy } from "./math-frenzy";
 import { ticTacToe } from "./tic-tac-toe";
 
@@ -156,6 +156,25 @@ describe("mancala", () => {
 		expect(mancala.apply(start, storeOf(0))).toBe(start);
 		const after = play(mancala, [pitOf(0, 3), pitOf(1, 0), pitOf(0, 0)]);
 		expect(mancala.apply(after, pitOf(1, 0))).toBe(after);
+	});
+
+	it("replays a move one seed at a time, then the capture", () => {
+		const start = mancala.setup(1);
+		start.board[pitOf(0, 0)] = 1;
+		start.board[pitOf(0, 1)] = 0;
+		const after = mancala.apply(start, pitOf(0, 0));
+		if (!after.last) throw new Error("no last move");
+		const frames = sowFrames(start.board, after.last);
+		expect(frames.map((f) => f.inHand)).toEqual([1, 0, 0]);
+		expect(frames[0].board[pitOf(0, 0)]).toBe(0);
+		expect(frames[1].board[pitOf(0, 1)]).toBe(1);
+		expect(frames[2].capturing).toEqual([pitOf(0, 1), 11]);
+
+		const extra = mancala.apply(start, pitOf(0, 2)).last;
+		if (!extra) throw new Error("no last move");
+		const plain = sowFrames(start.board, extra);
+		expect(plain).toHaveLength(5);
+		expect(plain.at(-1)?.active).toBe(storeOf(0));
 	});
 
 	it("computer plays a whole game and every seed ends in a store", () => {

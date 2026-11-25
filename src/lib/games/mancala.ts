@@ -22,7 +22,7 @@ export const pitOf = (player: Player, pit: number) =>
 const isOwnPit = (player: Player, index: number) =>
 	index >= pitOf(player, 0) && index < storeOf(player);
 /** The pit facing `index` across the board. */
-const opposite = (index: number) => 2 * PITS - index;
+export const opposite = (index: number) => 2 * PITS - index;
 
 export type MancalaState = {
 	board: number[];
@@ -135,3 +135,46 @@ export const mancala: TwoPlayerGame<MancalaState, MancalaMove> = {
 		};
 	},
 };
+
+/** One step of a move as the board shows it while seeds are being sown. */
+export type SowFrame = {
+	board: number[];
+	/** The pit or store that just got a seed, or the emptied pit at the start. */
+	active: number;
+	/** Seeds still to drop. */
+	inHand: number;
+	/** Pits being captured, shown just before their seeds move to the store. */
+	capturing: number[];
+};
+
+/**
+ * Replays the last move one seed at a time: the pit is emptied, each seed
+ * lands, then any capture. `before` is the board the move was made on; the
+ * final board itself is not included.
+ */
+export function sowFrames(
+	before: number[],
+	last: NonNullable<MancalaState["last"]>,
+): SowFrame[] {
+	const board = [...before];
+	let inHand = board[last.pit];
+	board[last.pit] = 0;
+	const frames: SowFrame[] = [
+		{ board: [...board], active: last.pit, inHand, capturing: [] },
+	];
+	for (const index of last.sown) {
+		board[index]++;
+		inHand--;
+		frames.push({ board: [...board], active: index, inHand, capturing: [] });
+	}
+	if (last.captured > 0) {
+		const landed = last.sown[last.sown.length - 1];
+		frames.push({
+			board: [...board],
+			active: landed,
+			inHand: 0,
+			capturing: [landed, opposite(landed)],
+		});
+	}
+	return frames;
+}

@@ -381,6 +381,60 @@ a {
   }
 }
 
+/* Mancala: a pit bumps as a seed lands, the new seed drops in, captures shake. */
+.mancala-pop {
+  animation: mancala-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes mancala-pop {
+  40% {
+    transform: scale(1.12);
+  }
+}
+
+.mancala-seed-drop {
+  animation: mancala-seed-drop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes mancala-seed-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.4);
+  }
+}
+
+.mancala-capture {
+  animation: mancala-capture 420ms ease-in-out 2;
+}
+
+@keyframes mancala-capture {
+  25% {
+    transform: translateX(-3px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(3deg);
+  }
+}
+
+.mancala-hint {
+  animation: mancala-hint 1600ms ease-in-out infinite;
+}
+
+@keyframes mancala-hint {
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--game-p1) 45%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mancala-pop,
+  .mancala-seed-drop,
+  .mancala-capture,
+  .mancala-hint {
+    animation: none;
+  }
+}
+
 .site-footer {
   border-top: 1px solid var(--line);
   background: color-mix(in oklab, var(--header-bg) 84%, transparent 16%);
