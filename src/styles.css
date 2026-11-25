@@ -33,6 +33,38 @@
   --game-p2: #6b8f5e;
   --game-surface: #fffdf4;
   --game-line: rgba(32, 32, 29, 0.14);
+  --game-board: #20201d;
+  --game-hole: #faedcd;
+  --game-win: #ffffff;
+  --game-input: #ffffff;
+  --danger-soft: #fee2e2;
+  --danger-line: #f87171;
+
+  /* Project / game tiles: tan, sage, cream, pale olive. */
+  --tile-1: #d4a373;
+  --tile-2: #ccd5ae;
+  --tile-3: #faedcd;
+  --tile-4: #e9edc9;
+  --tile-chip-bg: rgba(255, 255, 255, 0.4);
+  --tile-chip-line: rgba(0, 0, 0, 0.15);
+  --tile-solid-bg: #20201d;
+  --tile-solid-hover: #000000;
+  --tile-solid-ink: #ffffff;
+  --tile-outline-line: rgba(0, 0, 0, 0.3);
+  --tile-outline-hover: rgba(0, 0, 0, 0.05);
+
+  /* The hero sits on a photo, so it keeps the same colors in both themes. */
+  --hero-shade: #20201d;
+  --hero-text: #faedcd;
+
+  --brand-dot-a: #d4a373;
+  --brand-dot-b: #a3b18a;
+  --nav-underline: #d4a373;
+  --link-hover: #8e5f26;
+  --selection: rgba(212, 163, 115, 0.32);
+  --chip-shadow: 0 8px 24px rgba(74, 56, 30, 0.08);
+  --card-shadow: rgba(74, 56, 30, 0.1);
+  --code-bg: color-mix(in oklab, var(--surface-strong) 82%, white 18%);
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -69,59 +101,95 @@
   --sidebar-ring: oklch(0.871 0.006 286.286);
 }
 
+/* Dark mode mirrors the light palette: same cream / sage / tan hues, with
+   lightness inverted so the warm character carries over. */
 .dark {
-  --sea-ink: #d7ece8;
-  --sea-ink-soft: #afcdc8;
-  --lagoon: #60d7cf;
-  --lagoon-deep: #8de5db;
-  --palm: #6ec89a;
-  --sand: #0f1a1e;
-  --foam: #101d22;
-  --surface: rgba(16, 30, 34, 0.8);
-  --surface-strong: rgba(15, 27, 31, 0.92);
-  --line: rgba(141, 229, 219, 0.18);
-  --inset-glint: rgba(194, 247, 238, 0.14);
-  --kicker: #b8efe5;
-  --bg-base: #0a1418;
-  --header-bg: rgba(10, 20, 24, 0.8);
-  --chip-bg: rgba(13, 28, 32, 0.9);
-  --chip-line: rgba(141, 229, 219, 0.24);
-  --link-bg-hover: rgba(24, 44, 49, 0.8);
-  --hero-a: rgba(96, 215, 207, 0.18);
-  --hero-b: rgba(110, 200, 154, 0.12);
+  --sea-ink: #f3eedb;
+  --sea-ink-soft: #c9c3ad;
+  --lagoon: #faedcd;
+  --lagoon-deep: #a3b18a;
+  --palm: #a3b18a;
+  --sand: #1f1e17;
+  --foam: #3a3f2e;
+  --surface: rgba(36, 35, 28, 0.78);
+  --surface-strong: rgba(42, 40, 32, 0.92);
+  --line: rgba(243, 238, 219, 0.12);
+  --inset-glint: rgba(255, 248, 225, 0.06);
+  --kicker: #c9d3a8;
+  --bg-base: #191812;
+  --header-bg: rgba(25, 24, 18, 0.84);
+  --chip-bg: rgba(42, 40, 32, 0.9);
+  --chip-line: rgba(212, 163, 115, 0.28);
+  --link-bg-hover: rgba(58, 55, 44, 0.8);
+  --hero-a: rgba(212, 163, 115, 0.18);
+  --hero-b: rgba(163, 177, 138, 0.12);
+  --guess-wrong: rgba(196, 92, 92, 0.6);
+  --guess-close: #a8962c;
+  --guess-correct: rgba(84, 150, 112, 0.7);
+  --game-p1: #d9a877;
+  --game-p2: #8fae7f;
+  --game-surface: #24231c;
+  --game-line: rgba(243, 238, 219, 0.14);
+  --game-board: #3a3527;
+  --game-hole: #191812;
+  --game-win: #faedcd;
+  --game-input: #191812;
+  --danger-soft: rgba(248, 113, 113, 0.22);
+  --danger-line: #f87171;
 
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.274 0.006 286.033);
-  --input: oklch(0.274 0.006 286.033);
-  --ring: oklch(0.442 0.017 285.786);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.274 0.006 286.033);
-  --sidebar-ring: oklch(0.442 0.017 285.786);
+  --tile-1: #634a31;
+  --tile-2: #4a5340;
+  --tile-3: #4d4433;
+  --tile-4: #3a3f2e;
+  --tile-chip-bg: rgba(0, 0, 0, 0.22);
+  --tile-chip-line: rgba(255, 248, 225, 0.2);
+  --tile-solid-bg: #faedcd;
+  --tile-solid-hover: #ffffff;
+  --tile-solid-ink: #20201d;
+  --tile-outline-line: rgba(255, 248, 225, 0.35);
+  --tile-outline-hover: rgba(255, 248, 225, 0.08);
+
+  --brand-dot-a: #d4a373;
+  --brand-dot-b: #a3b18a;
+  --nav-underline: #d4a373;
+  --link-hover: #e7c39a;
+  --selection: rgba(212, 163, 115, 0.35);
+  --chip-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --card-shadow: rgba(0, 0, 0, 0.35);
+  --code-bg: color-mix(in oklab, var(--surface-strong) 90%, white 10%);
+
+  --background: #1f1e18;
+  --foreground: #f3eedb;
+  --card: #24231c;
+  --card-foreground: #f3eedb;
+  --popover: #24231c;
+  --popover-foreground: #f3eedb;
+  --primary: #d4a373;
+  --primary-foreground: #1f1e18;
+  --secondary: #2f2d24;
+  --secondary-foreground: #f3eedb;
+  --muted: #2f2d24;
+  --muted-foreground: #a8a28f;
+  --accent: #36332a;
+  --accent-foreground: #f3eedb;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.704 0.191 22.216);
+  --border: #3a372d;
+  --input: #46423a;
+  --ring: #a3b18a;
+  --chart-1: #d4a373;
+  --chart-2: #a3b18a;
+  --chart-3: #e9d8a6;
+  --chart-4: #8fae7f;
+  --chart-5: #c9876a;
+  --sidebar: #24231c;
+  --sidebar-foreground: #f3eedb;
+  --sidebar-primary: #d4a373;
+  --sidebar-primary-foreground: #1f1e18;
+  --sidebar-accent: #2f2d24;
+  --sidebar-accent-foreground: #f3eedb;
+  --sidebar-border: #3a372d;
+  --sidebar-ring: #a3b18a;
 }
 
 @theme inline {
@@ -196,19 +264,19 @@ body::after {
 
 a {
   color: var(--lagoon-deep);
-  text-decoration-color: rgba(50, 143, 151, 0.4);
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
 a:hover {
-  color: #246f76;
+  color: var(--link-hover);
 }
 
 code {
   font-size: 0.9em;
   border: 1px solid var(--line);
-  background: color-mix(in oklab, var(--surface-strong) 82%, white 18%);
+  background: var(--code-bg);
   border-radius: 7px;
   padding: 2px 7px;
 }
@@ -243,8 +311,8 @@ pre code {
   background: linear-gradient(165deg, var(--surface-strong), var(--surface));
   box-shadow:
     0 1px 0 var(--inset-glint) inset,
-    0 22px 44px rgba(30, 90, 72, 0.1),
-    0 6px 18px rgba(23, 58, 64, 0.08);
+    0 22px 44px var(--card-shadow),
+    0 6px 18px var(--card-shadow);
   backdrop-filter: blur(4px);
 }
 
@@ -268,8 +336,8 @@ pre code {
   );
   box-shadow:
     0 1px 0 var(--inset-glint) inset,
-    0 18px 34px rgba(30, 90, 72, 0.1),
-    0 4px 14px rgba(23, 58, 64, 0.06);
+    0 18px 34px var(--card-shadow),
+    0 4px 14px var(--card-shadow);
 }
 
 .feature-card:hover {
@@ -310,7 +378,7 @@ a {
   height: 2px;
   transform: scaleX(0);
   transform-origin: left;
-  background: linear-gradient(90deg, var(--lagoon), #7ed3bf);
+  background: var(--nav-underline);
   transition: transform 170ms ease;
 }
 
@@ -470,6 +538,13 @@ a {
   --defy-wrong-bg: #f8cfcf;
   --defy-wrong-border: rgba(240, 160, 160, 0.85);
   --defy-wrong-text: #9e5757;
+  --defy-on-accent: #ffffff;
+  --defy-accent-hover: #c68f58;
+  --defy-ink-hover: #2c2a24;
+  --defy-win-bg: rgba(124, 196, 154, 0.1);
+  --defy-header-bg: rgba(252, 250, 232, 0.9);
+  --defy-card-shadow: 0 1px 0 rgba(23, 22, 19, 0.04),
+    0 12px 32px -18px rgba(23, 22, 19, 0.28);
 
   --background: var(--defy-surface);
   --foreground: var(--defy-ink);
@@ -494,7 +569,7 @@ a {
   --bg-base: var(--defy-bg);
   --lagoon-deep: var(--defy-accent);
   --line: var(--defy-line);
-  --header-bg: rgba(252, 250, 232, 0.9);
+  --header-bg: var(--defy-header-bg);
   --chip-bg: var(--defy-surface);
   --chip-line: var(--defy-line);
   --guess-wrong: var(--defy-wrong-bg);
@@ -503,6 +578,37 @@ a {
 
   background-color: var(--defy-bg);
   font-family: "Poppins", var(--font-sans);
+}
+
+/* Same Defy palette, inverted for dark mode. Only the base tokens change; the
+   shadcn and site aliases above pick these up automatically. */
+.dark .defy-theme {
+  --defy-bg: #191812;
+  --defy-surface: #22211a;
+  --defy-surface-muted: #2c2a22;
+  --defy-ink: #f3eedb;
+  --defy-ink-soft: #ddd7c3;
+  --defy-muted: #a8a28f;
+  --defy-line: #3a372d;
+  --defy-accent: #d6a16c;
+  --defy-accent-strong: #e7c39a;
+  --defy-accent-soft: rgba(214, 161, 108, 0.16);
+  --defy-accent-text: #e7c39a;
+  --defy-correct-bg: rgba(84, 150, 112, 0.28);
+  --defy-correct-border: #5fa77f;
+  --defy-correct-text: #8fd1ab;
+  --defy-wrong-bg: rgba(196, 92, 92, 0.28);
+  --defy-wrong-border: rgba(214, 120, 120, 0.75);
+  --defy-wrong-text: #eb9e9e;
+  --defy-on-accent: #191812;
+  --defy-accent-hover: #e2b483;
+  --defy-ink-hover: #ffffff;
+  --defy-win-bg: rgba(124, 196, 154, 0.12);
+  --defy-header-bg: rgba(25, 24, 18, 0.9);
+  --defy-card-shadow: 0 1px 0 rgba(0, 0, 0, 0.2),
+    0 12px 32px -18px rgba(0, 0, 0, 0.6);
+
+  --guess-close: #a8962c;
 }
 
 .defy-theme code {

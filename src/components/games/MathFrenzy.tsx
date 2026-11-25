@@ -119,7 +119,7 @@ export function MathFrenzy() {
 							aria-label="Your answer"
 							placeholder="?"
 							className={cn(
-								"w-40 rounded-xl border-2 bg-white px-4 py-2 text-center font-mono text-3xl outline-none transition-colors",
+								"w-40 rounded-xl border-2 bg-(--game-input) px-4 text-(--sea-ink) py-2 text-center font-mono text-3xl outline-none transition-colors",
 								state.last === "missed"
 									? "border-(--guess-wrong)"
 									: "border-(--game-line) focus:border-(--game-p1)",

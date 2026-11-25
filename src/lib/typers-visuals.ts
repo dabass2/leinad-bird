@@ -19,8 +19,15 @@ export const ASTEROID_ROCK_SHADOW_COLOR = "#7a6e5f";
 export const ASTEROID_RIM_COLOR = "#5e5448";
 export const ASTEROID_CRATER_COLOR = "#6b6052";
 
+// Words always sit on the fixed rock color, so their ink is fixed too.
+export const ASTEROID_TEXT_COLOR = "#000000";
 export const ASTEROID_TEXT_STROKE_LIGHT = "#fdf8ec";
-export const ASTEROID_TEXT_STROKE_DARK = "#1a1a1a";
+
+// Game-over text sits on the page background; matches --sea-ink per theme.
+export const GAME_OVER_TEXT_COLORS = {
+	light: "#000000",
+	dark: "#f3eedb",
+} as const;
 
 let measureContext: CanvasRenderingContext2D | null | undefined;
 

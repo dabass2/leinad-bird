@@ -42,7 +42,7 @@ function MiniBoard({
 					mark === "pick" && "border-dashed border-(--sea-ink-soft)",
 					mark === "sown" && "border-(--game-p1)",
 					mark === "side" && "border-(--game-p1)/60",
-					mark === "capture" && "border-red-400 bg-red-100",
+					mark === "capture" && "border-(--danger-line) bg-(--danger-soft)",
 					mark === "store" && "border-(--game-p1)",
 				)}
 				style={

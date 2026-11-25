@@ -111,7 +111,7 @@ function InHand({ count, player }: { count: number; player: Player }) {
 	return (
 		<span
 			aria-hidden
-			className="absolute -top-2 -right-1 z-10 flex size-6 items-center justify-center rounded-full text-xs font-extrabold text-(--sea-ink) shadow-md ring-2 ring-white"
+			className="absolute -top-2 -right-1 z-10 flex size-6 items-center justify-center rounded-full text-xs font-extrabold text-(--sea-ink) shadow-md ring-2 ring-(--game-surface)"
 			style={{ background: playerColor(player) }}
 		>
 			{count}
@@ -182,11 +182,11 @@ export function Mancala() {
 					sown.has(index) && "ring-2 ring-(--sea-ink-soft)/40",
 					picked && "border-dashed",
 					active && frame.capturing.length === 0 && "mancala-pop",
-					capturing.has(index) && "mancala-capture bg-red-100",
+					capturing.has(index) && "mancala-capture bg-(--danger-soft)",
 				)}
 				style={{
 					borderColor: capturing.has(index)
-						? "rgb(248 113 113)"
+						? "var(--danger-line)"
 						: active
 							? playerColor(mover)
 							: playable

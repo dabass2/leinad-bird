@@ -5,10 +5,10 @@ import { GAMES } from "#/lib/games/catalog";
 export const Route = createFileRoute("/games/")({ component: GamesIndex });
 
 const CARD_COLORS = [
-	"var(--primary)",
-	"var(--palm)",
-	"var(--lagoon)",
-	"var(--foam)",
+	"var(--tile-1)",
+	"var(--tile-2)",
+	"var(--tile-3)",
+	"var(--tile-4)",
 ];
 
 function GamesIndex() {
@@ -38,7 +38,7 @@ function GamesIndex() {
 							</p>
 						</div>
 						<div className="mt-4 flex items-center justify-between text-xs font-bold">
-							<span className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white/40 px-2 py-0.5">
+							<span className="inline-flex items-center gap-1.5 rounded-full border border-(--tile-chip-line) bg-(--tile-chip-bg) px-2 py-0.5">
 								<Users className="size-3" /> {game.players}
 							</span>
 							<ArrowRight className="size-5 transition group-hover:translate-x-1" />
