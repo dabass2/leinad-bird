@@ -39,17 +39,11 @@ const GUIDE_SEEN_KEY = "games:mancala:guide-seen";
 const stepMs = (frames: number) => Math.max(110, Math.min(280, 3000 / frames));
 const CAPTURE_MS = 800;
 
-const prefersReducedMotion = () => {
-	try {
-		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	} catch {
-		return false;
-	}
-};
-
 /**
  * Replays each new move seed by seed. Returns the frame to show, or null once
- * the board has caught up with the real state.
+ * the board has caught up with the real state. This runs even when the viewer
+ * prefers reduced motion: the replay is how you follow a move, so only the
+ * bounce and shake effects are turned off (in styles.css), not the steps.
  */
 function useSowAnimation(state: MancalaState) {
 	const [seen, setSeen] = useState(state);
@@ -61,7 +55,7 @@ function useSowAnimation(state: MancalaState) {
 	if (seen !== state) {
 		setSeen(state);
 		setPlay(
-			state.last && !prefersReducedMotion()
+			state.last
 				? { frames: sowFrames(seen.board, state.last), step: 0 }
 				: null,
 		);
@@ -194,6 +188,11 @@ export function Mancala() {
 								: picked
 									? "var(--game-line)"
 									: undefined,
+					// A tint that doesn't rely on motion marks where the seed just landed.
+					backgroundColor:
+						active && !capturing.has(index)
+							? `color-mix(in srgb, ${playerColor(mover)} 30%, var(--game-surface))`
+							: undefined,
 				}}
 			>
 				<Seeds count={seeds} dropLast={active} />
@@ -219,7 +218,7 @@ export function Mancala() {
 					active && "mancala-pop",
 				)}
 				style={{
-					background: `color-mix(in srgb, ${playerColor(player)} 35%, var(--game-surface))`,
+					background: `color-mix(in srgb, ${playerColor(player)} ${active ? 65 : 35}%, var(--game-surface))`,
 				}}
 			>
 				<span className="text-xl font-extrabold text-(--sea-ink) sm:text-2xl">
