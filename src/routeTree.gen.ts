@@ -17,6 +17,7 @@ import { Route as DefyIndexRouteImport } from './routes/defy/index'
 import { Route as PaintCanvasIdRouteImport } from './routes/paint/$canvasId'
 import { Route as GamesTicTacToeRouteImport } from './routes/games/tic-tac-toe'
 import { Route as GamesMathFrenzyRouteImport } from './routes/games/math-frenzy'
+import { Route as GamesMancalaRouteImport } from './routes/games/mancala'
 import { Route as GamesDotsAndBoxesRouteImport } from './routes/games/dots-and-boxes'
 import { Route as GamesConnectFourRouteImport } from './routes/games/connect-four'
 import { Route as GamesConcentrationRouteImport } from './routes/games/concentration'
@@ -61,6 +62,11 @@ const GamesMathFrenzyRoute = GamesMathFrenzyRouteImport.update({
   path: '/games/math-frenzy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesMancalaRoute = GamesMancalaRouteImport.update({
+  id: '/games/mancala',
+  path: '/games/mancala',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GamesDotsAndBoxesRoute = GamesDotsAndBoxesRouteImport.update({
   id: '/games/dots-and-boxes',
   path: '/games/dots-and-boxes',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/mancala': typeof GamesMancalaRoute
   '/games/math-frenzy': typeof GamesMathFrenzyRoute
   '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/mancala': typeof GamesMancalaRoute
   '/games/math-frenzy': typeof GamesMathFrenzyRoute
   '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
+  '/games/mancala': typeof GamesMancalaRoute
   '/games/math-frenzy': typeof GamesMathFrenzyRoute
   '/games/tic-tac-toe': typeof GamesTicTacToeRoute
   '/paint/$canvasId': typeof PaintCanvasIdRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
+    | '/games/mancala'
     | '/games/math-frenzy'
     | '/games/tic-tac-toe'
     | '/paint/$canvasId'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
+    | '/games/mancala'
     | '/games/math-frenzy'
     | '/games/tic-tac-toe'
     | '/paint/$canvasId'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
+    | '/games/mancala'
     | '/games/math-frenzy'
     | '/games/tic-tac-toe'
     | '/paint/$canvasId'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   GamesConcentrationRoute: typeof GamesConcentrationRoute
   GamesConnectFourRoute: typeof GamesConnectFourRoute
   GamesDotsAndBoxesRoute: typeof GamesDotsAndBoxesRoute
+  GamesMancalaRoute: typeof GamesMancalaRoute
   GamesMathFrenzyRoute: typeof GamesMathFrenzyRoute
   GamesTicTacToeRoute: typeof GamesTicTacToeRoute
   PaintCanvasIdRoute: typeof PaintCanvasIdRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesMathFrenzyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/mancala': {
+      id: '/games/mancala'
+      path: '/games/mancala'
+      fullPath: '/games/mancala'
+      preLoaderRoute: typeof GamesMancalaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/games/dots-and-boxes': {
       id: '/games/dots-and-boxes'
       path: '/games/dots-and-boxes'
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesConcentrationRoute: GamesConcentrationRoute,
   GamesConnectFourRoute: GamesConnectFourRoute,
   GamesDotsAndBoxesRoute: GamesDotsAndBoxesRoute,
+  GamesMancalaRoute: GamesMancalaRoute,
   GamesMathFrenzyRoute: GamesMathFrenzyRoute,
   GamesTicTacToeRoute: GamesTicTacToeRoute,
   PaintCanvasIdRoute: PaintCanvasIdRoute,

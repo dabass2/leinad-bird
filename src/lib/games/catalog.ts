@@ -19,6 +19,12 @@ export const GAMES = [
 		players: "1–2 players",
 	},
 	{
+		to: "/games/mancala",
+		title: "Mancala",
+		description: "Sow seeds around the board, capture, and fill your store.",
+		players: "1–2 players",
+	},
+	{
 		to: "/games/concentration",
 		title: "Concentration",
 		description: "Find every matching pair in as few moves as you can.",
