@@ -1,5 +1,12 @@
 export const GAMES = [
 	{
+		to: "/games/battle",
+		title: "Battle",
+		description:
+			"Cannae, 216 BC, laid out on a map you can pan and zoom. Early preview.",
+		players: "Preview",
+	},
+	{
 		to: "/games/tic-tac-toe",
 		title: "Tic-Tac-Toe",
 		description: "Three in a row. Play the computer or a friend.",

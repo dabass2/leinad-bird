@@ -21,6 +21,7 @@ import { Route as GamesMancalaRouteImport } from './routes/games/mancala'
 import { Route as GamesDotsAndBoxesRouteImport } from './routes/games/dots-and-boxes'
 import { Route as GamesConnectFourRouteImport } from './routes/games/connect-four'
 import { Route as GamesConcentrationRouteImport } from './routes/games/concentration'
+import { Route as GamesBattleRouteImport } from './routes/games/battle'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,9 +83,15 @@ const GamesConcentrationRoute = GamesConcentrationRouteImport.update({
   path: '/games/concentration',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesBattleRoute = GamesBattleRouteImport.update({
+  id: '/games/battle',
+  path: '/games/battle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/games/battle': typeof GamesBattleRoute
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/games/battle': typeof GamesBattleRoute
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
@@ -114,6 +122,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/games/battle': typeof GamesBattleRoute
   '/games/concentration': typeof GamesConcentrationRoute
   '/games/connect-four': typeof GamesConnectFourRoute
   '/games/dots-and-boxes': typeof GamesDotsAndBoxesRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/games/battle'
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/games/battle'
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/games/battle'
     | '/games/concentration'
     | '/games/connect-four'
     | '/games/dots-and-boxes'
@@ -173,6 +185,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GamesBattleRoute: typeof GamesBattleRoute
   GamesConcentrationRoute: typeof GamesConcentrationRoute
   GamesConnectFourRoute: typeof GamesConnectFourRoute
   GamesDotsAndBoxesRoute: typeof GamesDotsAndBoxesRoute
@@ -272,11 +285,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesConcentrationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/battle': {
+      id: '/games/battle'
+      path: '/games/battle'
+      fullPath: '/games/battle'
+      preLoaderRoute: typeof GamesBattleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GamesBattleRoute: GamesBattleRoute,
   GamesConcentrationRoute: GamesConcentrationRoute,
   GamesConnectFourRoute: GamesConnectFourRoute,
   GamesDotsAndBoxesRoute: GamesDotsAndBoxesRoute,
