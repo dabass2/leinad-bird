@@ -2,8 +2,7 @@ export const GAMES = [
 	{
 		to: "/games/battle",
 		title: "Battle",
-		description:
-			"Cannae, 216 BC, laid out on a map you can pan and zoom. Early preview.",
+		description: "A top-down battle map rendered from Tiled. Early preview.",
 		players: "Preview",
 	},
 	{

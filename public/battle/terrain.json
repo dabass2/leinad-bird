@@ -1,0 +1,22 @@
+{
+	"grass": {
+		"name": "Grass",
+		"color": "#b9c98a"
+	},
+	"forest": {
+		"name": "Forest",
+		"color": "#5f8a4e"
+	},
+	"hill": {
+		"name": "Hill",
+		"color": "#c9b27c"
+	},
+	"marsh": {
+		"name": "Marsh",
+		"color": "#8fae9a"
+	},
+	"water": {
+		"name": "Water",
+		"color": "#6f9fc4"
+	}
+}
